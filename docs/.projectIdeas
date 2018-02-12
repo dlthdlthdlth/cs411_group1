@@ -1,0 +1,13 @@
+Group: Javiar Titus, Sohy Lee, Rebecca Stiffelman, Jessica McAloon
+
+Project 1:
+Our idea is to combine the fitbit api and eventbrite api to find fitness-related events in a user’s area 
+based on the activities they’ve logged on fitbit. For example, if the user is an avid runner and cyclist, 
+our app could recommend local races and spin classes based on what’s found on eventbrite. 
+A user would log in with Twitter or Facebook via Oauth, and we would store their information in a database.
+
+Project 2:
+For this project we would build an api that allows individuals to make educated decisions about
+where they choose to live in the city of Boston. Our api would incorporate public data sets 
+such as crime rates, income, property values and other criteria by neighborhood and provide users with neighborhood scores 
+for all Boston neighborhoods. Users would log in via Facebook or Twitter and their information would be stored in a database. 
