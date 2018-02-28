@@ -1,0 +1,6 @@
+Story 1: User Login
+As a new user, I land on a page with a description of the app and a link that says “log in with Fitbit”. 
+I click the link and enter my Fitbit credentials, which creates a new account for me on the app. 
+I am then welcomed into the app with a view of my new profile. 
+As a user who has already made an account but was logged out, I log in with Fitbit again and am brought back to my profile.
+
