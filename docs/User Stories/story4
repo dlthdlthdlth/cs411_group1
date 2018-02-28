@@ -1,0 +1,5 @@
+Story 4: Searching events by keywords 
+As a logged in user, I also have the option to freely browse events. 
+In this story, I specify the type of sports, location, date, time, and distance in order to find classes I am interested in. 
+When I press enter, the website provides a list of events relevant to the specifications I have provided. 
+I have the option to read the full description, and register if interested. 
