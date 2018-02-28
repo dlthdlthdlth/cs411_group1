@@ -1,0 +1,7 @@
+Story 3: Browsing Recommendations
+As an authenticated user, I can view my recommended events based on my fitbit activity by scrolling down 
+a list of events on my homepage. I can remove events that I am not interested in. 
+The events are sorted by date (and do not show events that have already happened). 
+The date, time, location, and cost of each event is displayed, and I can click on an event if I want a full description. 
+I can narrow the recommended events by applying certain filters such as start time, cost, and distance from me. 
+I have the option to click “register” on an event that will bring me to the event’s registration page on EventBrite.
