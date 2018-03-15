@@ -1,0 +1,15 @@
+
+
+module.exports = function(app, db){
+    app.post('/', (req, res) => {
+	    //post method
+	    res.send('Hello')
+	});
+};
+
+module.exports = function(app, db) {
+    app.get('/', (req, res) => {
+	    //get method
+	    res.send('Hello')
+	});
+};
