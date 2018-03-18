@@ -1,5 +1,6 @@
 var request = require("request");
-var eventbriteToken = 'MHPPXZ3TBMC6E47PBCYK';
+var eventbriteToken = 'Anonymous access OAuth token from eventbrite';
+
 
 
 module.exports = function(app, db){
@@ -10,8 +11,16 @@ module.exports = function(app, db){
 };
 
 
+module.exports = function(app, db){
+    app.post('/searchresults', (req, res) => {
+	    //post method
+      console.log("hi");
+	    res.send('You sent the name "' + req.body.search + '".')
+	});
+};
 
-//Example API call for team assignment 3
+
+//Example of getting description of event when given event id
 module.exports = function(app, db) {
     app.get('/example', (req, res) => {
 
