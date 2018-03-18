@@ -11,14 +11,6 @@ module.exports = function(app, db){
 };
 
 
-module.exports = function(app, db){
-    app.post('/searchresults', (req, res) => {
-	    //post method
-      console.log("hi");
-	    res.send('You sent the name "' + req.body.search + '".')
-	});
-};
-
 
 //Example of getting description of event when given event id
 module.exports = function(app, db) {
