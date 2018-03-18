@@ -3,12 +3,14 @@
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
+const path = require('path');
 const app = express();
 
 const port = 8000;
 
-//app.set('views', path.join(__dirname, 'views'));
-//app.set('view engine', 'pug');
+app.engine('pug', require('pug').__express)
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 require('./routes')(app, {});
 app.use('/', express.static('views'));
 

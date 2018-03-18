@@ -15,7 +15,9 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.3",
-    "mongodb": "^2.2.16"
+    "mongodb": "^2.2.16",
+    "node-eventbrite": "0.0.19",
+    "pug": "^2.0.1"
   },
   "devDependencies": {
     "nodemon": "^1.17.2"
