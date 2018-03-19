@@ -1,6 +1,7 @@
-var request = require("request");
-var eventbriteToken = 'Anonymous access OAuth token from eventbrite';
+const bodyParser = require('body-parser');
 
+const request = require("request");
+const eventbriteToken = 'Anonymous OAuth token';
 
 
 module.exports = function(app, db){
@@ -11,24 +12,33 @@ module.exports = function(app, db){
 };
 
 
+//Search for an event
+module.exports = function(app, db){
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({extended: true}));
+  app.post('/searchresults', (req, res)  => {
+    console.log(req.body);
+    var term = req.body.search;
+    var options = { method: 'GET',
+      url: 'https://www.eventbriteapi.com/v3/events/search/',
+      qs: { q: term, token: 'MHPPXZ3TBMC6E47PBCYK' }};
 
-//Example of getting description of event when given event id
-module.exports = function(app, db) {
-    app.get('/example', (req, res) => {
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
 
-      var options = { method: 'GET',
-        url: 'https://www.eventbriteapi.com/v3/events/43361394097/', //event id is 43361394097 (found in url on event page)
-        qs: { token: eventbriteToken }};
+      var response = body;
+      response = JSON.parse(response);
+      var events = response.events;
 
-      request(options, function (error, response, body) {
-        if (error) throw new Error(error);
+      var eventDict = {};
 
-        var response = body;
-        response = JSON.parse(response);
-        var eventName = response.name.text;
-        var eventDescription = response.description.text;
-        res.render('index', { title: eventName, h1: eventName, p: eventDescription});
+      for (var i = 0; i < events.length; i++){
+        var eventName = events[i].name.text
+        eventDict[eventName] =  events[i].description.text;
+      }
 
-      });
+      res.render('searchResults', { term: term, eventDict: eventDict});
     });
-	};
+
+  });
+};
