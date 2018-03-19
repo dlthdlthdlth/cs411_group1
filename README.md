@@ -14,4 +14,4 @@ We're using the Eventbrite API and the Fitbit API to recommend events to users b
 3. Point your browser to localhost:8000
 
 # Team Assignment #3
-The api call is in app_routes.js
+The api call is in app/routes/app_routes.js
