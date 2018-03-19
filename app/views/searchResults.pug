@@ -1,0 +1,11 @@
+html
+  head
+    title Search results for #{term}
+  body
+    h1 Search results for #{term}:
+
+    each desc, name in eventDict
+      h3 #{name}
+      p #{desc}
+      
+  
