@@ -30,14 +30,7 @@ module.exports = function(app, db){
       response = JSON.parse(response);
       var events = response.events;
 
-      var eventDict = {};
-
-      for (var i = 0; i < events.length; i++){
-        var eventName = events[i].name.text
-        eventDict[eventName] =  events[i].description.text;
-      }
-
-      res.render('searchResults', { term: term, eventDict: eventDict});
+      res.render('searchResults', { term: term, events: events});
     });
 
   });
