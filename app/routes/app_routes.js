@@ -21,7 +21,7 @@ module.exports = function(app, db){
     var term = req.body.search;
     var options = { method: 'GET',
       url: 'https://www.eventbriteapi.com/v3/events/search/',
-      qs: { q: term, token: eventbriteToken }};
+      qs: { q: term, token: "Token" }};
 
     request(options, function (error, response, body) {
       if (error) throw new Error(error);
@@ -30,7 +30,18 @@ module.exports = function(app, db){
       response = JSON.parse(response);
       var events = response.events;
 
+<<<<<<< HEAD
       res.render('searchResults', { term: term, events: events});
+=======
+      var eventDict = {};
+
+      for (var i = 0; i < events.length; i++){
+        var eventName = events[i].name.text
+        eventDict[eventName] =  events[i].description.text;
+      }
+
+      res.render('searchresults', { term: term, eventDict: eventDict});
+>>>>>>> 9ab77aaced7255831b214a92aee0d14e0a48937f
     });
 
   });
