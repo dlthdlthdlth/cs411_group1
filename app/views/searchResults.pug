@@ -3,9 +3,13 @@ html
     title Search results for #{term}
   body
     h1 Search results for #{term}:
+    
+    for event in events
+      h3 #{event.name.text}
+      p #{event.description.text}
 
-    each desc, name in eventDict
-      h3 #{name}
-      p #{desc}
-      
+    //- each desc, name in eventDict
+    //-   h3 #{name}
+    //-   p #{desc}
+    //- 
   

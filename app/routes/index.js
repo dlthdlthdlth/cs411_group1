@@ -1,6 +1,10 @@
-const appRoutes = require('./app_routes');
+var express = require('express');
+var router = express.Router();
+var path = require('path');
 
-module.exports = function(app, db){
-    appRoutes(app, db);
-};
+/* GET home page. */
+router.get('/', function(req, res) {
+  res.sendFile(path.resolve('views/index.html'));
+});
 
+module.exports = router;

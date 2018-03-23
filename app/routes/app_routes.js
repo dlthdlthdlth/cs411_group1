@@ -1,7 +1,7 @@
 const bodyParser = require('body-parser');
 
 const request = require("request");
-const eventbriteToken = 'Anonymous OAuth token';
+const eventbriteToken = 'MHPPXZ3TBMC6E47PBCYK';
 
 
 module.exports = function(app, db){
