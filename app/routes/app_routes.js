@@ -21,7 +21,7 @@ module.exports = function(app, db){
     var term = req.body.search;
     var options = { method: 'GET',
       url: 'https://www.eventbriteapi.com/v3/events/search/',
-      qs: { q: term, token: eventbriteToken }};
+      qs: { q: term, token: "Token" }};
 
     request(options, function (error, response, body) {
       if (error) throw new Error(error);
@@ -37,7 +37,7 @@ module.exports = function(app, db){
         eventDict[eventName] =  events[i].description.text;
       }
 
-      res.render('searchResults', { term: term, eventDict: eventDict});
+      res.render('searchresults', { term: term, eventDict: eventDict});
     });
 
   });
