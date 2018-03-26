@@ -1,7 +1,7 @@
 const bodyParser = require('body-parser');
 
 const request = require("request");
-const eventbriteToken = 'MHPPXZ3TBMC6E47PBCYK';
+const eventbriteToken = 'Anonymous OAuth Token';
 
 
 module.exports = function(app, db){
@@ -30,14 +30,7 @@ module.exports = function(app, db){
       response = JSON.parse(response);
       var events = response.events;
 
-      var eventDict = {};
-
-      for (var i = 0; i < events.length; i++){
-        var eventName = events[i].name.text
-        eventDict[eventName] =  events[i].description.text;
-      }
-
-      res.render('searchresults', { term: term, eventDict: eventDict});
+      res.render('searchresults', { term: term, events: events});
     });
 
   });
