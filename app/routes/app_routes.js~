@@ -4,13 +4,12 @@ const request = require("request");
 const eventbriteToken = 'Anonymous OAuth token';
 
 
-module.exports = function(app, db){
-    app.post('/app', (req, res) => {
-	    //post method
-	    res.send('Hello')
-	});
-};
-
+//module.exports = function(app, db){
+//    app.get('/', (req, res) => {
+	    //get method
+//	    res.render('homePage', {});
+//	});
+//};
 
 //Search for an event
 module.exports = function(app, db){
@@ -21,7 +20,7 @@ module.exports = function(app, db){
     var term = req.body.search;
     var options = { method: 'GET',
       url: 'https://www.eventbriteapi.com/v3/events/search/',
-      qs: { q: term, token: "MHPPXZ3TBMC6E47PBCYK" }};
+      qs: { q: term, token: "Token" }};
 
     request(options, function (error, response, body) {
       if (error) throw new Error(error);
