@@ -17,8 +17,14 @@ require('./routes')(app, {});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+//app.use('/', express.static('views'));
 
-app.use('/', express.static('views'));
+app.get('/', function (req, res) {
+ 
+	//render the 'index' template
+	res.render('index');
+ 
+    });
 
 app.listen(port, () => {
 	console.log('We are live on ' + port);
