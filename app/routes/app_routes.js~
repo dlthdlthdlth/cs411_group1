@@ -20,11 +20,8 @@ module.exports = function(app, db){
     var term = req.body.search;
     var options = { method: 'GET',
       url: 'https://www.eventbriteapi.com/v3/events/search/',
-<<<<<<< HEAD
       qs: { q: term, token: "MHPPXZ3TBMC6E47PBCYK" }};
-=======
       qs: { q: term, token: eventbriteToken }};
->>>>>>> a5f2e6789d8ca80b4c2f1881b0dd3825b022685b
 
     request(options, function (error, response, body) {
       if (error) throw new Error(error);
