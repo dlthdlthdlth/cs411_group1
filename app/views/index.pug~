@@ -1,0 +1,10 @@
+html
+	head
+	title Home
+	body
+		form(action='/searchresults', method='POST')
+    		p
+      		| Search: 
+      		input(type='text', name='search', value='')
+    		input(type='submit', value='Submit')
+		a(class='button' href='/homePage.pug') Home 

@@ -1,0 +1,21 @@
+doctype html
+html
+  head
+    title= Home
+
+    block styles
+
+        link(rel='stylesheet', href='.css')
+
+  body
+
+    block navBar
+        div.container
+            ul.col-md-12.row
+                a(href="#")
+                    li.col-md-3.col-md-offset-1 Feed
+                a(href="#")
+                    li.col-md-3 Profile
+                a(href="#")
+                    li.col-md-3 Friends
+    block content
