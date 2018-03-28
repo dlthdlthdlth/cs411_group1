@@ -4,12 +4,12 @@ const request = require("request");
 const eventbriteToken = 'Anonymous OAuth Token';
 
 
-//module.exports = function(app, db){
-//    app.get('/', (req, res) => {
+module.exports = function(app, db){
+    app.post('/', (req, res) => {
 	    //get method
-//	    res.render('homePage', {});
-//	});
-//};
+	    res.render('homePage', {});
+	});
+};
 
 //Search for an event
 module.exports = function(app, db){
