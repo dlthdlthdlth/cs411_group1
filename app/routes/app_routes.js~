@@ -1,7 +1,7 @@
 const bodyParser = require('body-parser');
 
 const request = require("request");
-const eventbriteToken = 'Anonymous OAuth token';
+const eventbriteToken = 'Anonymous OAuth Token';
 
 
 //module.exports = function(app, db){
@@ -20,7 +20,11 @@ module.exports = function(app, db){
     var term = req.body.search;
     var options = { method: 'GET',
       url: 'https://www.eventbriteapi.com/v3/events/search/',
-      qs: { q: term, token: "Token" }};
+<<<<<<< HEAD
+      qs: { q: term, token: "MHPPXZ3TBMC6E47PBCYK" }};
+=======
+      qs: { q: term, token: eventbriteToken }};
+>>>>>>> a5f2e6789d8ca80b4c2f1881b0dd3825b022685b
 
     request(options, function (error, response, body) {
       if (error) throw new Error(error);
@@ -29,14 +33,7 @@ module.exports = function(app, db){
       response = JSON.parse(response);
       var events = response.events;
 
-      var eventDict = {};
-
-      for (var i = 0; i < events.length; i++){
-        var eventName = events[i].name.text
-        eventDict[eventName] =  events[i].description.text;
-      }
-
-      res.render('searchresults', { term: term, eventDict: eventDict});
+      res.render('searchResults', { term: term, events: events});
     });
 
   });
