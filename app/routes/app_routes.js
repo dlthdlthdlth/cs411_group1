@@ -1,7 +1,7 @@
 const bodyParser = require('body-parser');
 
 const request = require("request");
-const eventbriteToken = '';
+const eventbriteToken = 'MHPPXZ3TBMC6E47PBCYK';
 
 
 // module.exports = function(app, db){
@@ -32,7 +32,7 @@ module.exports = function(app, db){
       response = JSON.parse(response);
       var events = response.events;
 
-      res.render('searchResults', { term: term, events: events});
+      res.render('searchResults', { terms: term, events: events});
     });
 
   });
