@@ -1,20 +1,23 @@
 const bodyParser = require('body-parser');
 
 const request = require("request");
-const eventbriteToken = 'Anonymous OAuth Token';
+const eventbriteToken = 'MHPPXZ3TBMC6E47PBCYK';
 
 
-module.exports = function(app, db){
-    app.post('/', (req, res) => {
-	    //get method
-	    res.render('homePage', {});
-	});
-};
+// module.exports = function(app, db){
+//   app.use(bodyParser.json());
+//   app.use(bodyParser.urlencoded({extended: true}));
+//     app.get('/homePage', (req, res) => {
+// 	    //get method
+// 	    res.render('homePage', {});
+// 	});
+// };
 
-//Search for an event
 module.exports = function(app, db){
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({extended: true}));
+
+  //Search for an event
   app.post('/searchresults', (req, res)  => {
     console.log(req.body);
     var term = req.body.search;
@@ -33,4 +36,9 @@ module.exports = function(app, db){
     });
 
   });
+
+  app.get('/homePage', (req, res) => {
+    res.render('homePage', {});
+  });
+
 };

@@ -7,4 +7,6 @@ html
       | Search: 
       input(type='text', name='search', value='')
       input(type='submit', value='Submit')
-      a(class='button' href='/homePage.pug') Home 
+    form(action='/homePage', method='GET')
+      input(type='submit', value='Home')
+      
