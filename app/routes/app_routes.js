@@ -1,7 +1,7 @@
 const bodyParser = require('body-parser');
 
 const request = require("request");
-const eventbriteToken = 'MHPPXZ3TBMC6E47PBCYK';
+const eventbriteToken = '';
 
 
 // module.exports = function(app, db){
@@ -37,8 +37,12 @@ module.exports = function(app, db){
 
   });
 
-  app.get('/homePage', (req, res) => {
-    res.render('homePage', {});
+  app.get('/search', (req, res) => {
+    res.render('search', {});
+  });
+
+  app.get('/profile', (req, res) => {
+    res.render('profile', {});
   });
 
 };
