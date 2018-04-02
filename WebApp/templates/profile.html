@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+</head>
+<body>
+    <section class="header">
+            <h1>My Profile</h1>
+    </section>
+    <section class="message">
+        {% if name %}
+            <h1> {{ name }}</h1>
+        {% endif %}
+    </section>
+    <br />
+    <nav class="navigation">
+        <a href='/'>Home</a>
+        <a href='/profile'>Profile</a>
+        <a href='/logout'>Logout</a>
+    </nav>
+    <br />
+    <section class="events">
+        {% if fitbit %}
+            <h1>My FitBit Activities</h1>
+            <ul>
+                {% for i in fitbit %}
+                <li>{{ i }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </section>
+    <section class="events">
+        {% if events %}
+            <h1>My Past Events</h1>
+            <ul>
+                {% for i in events %}
+                <li>{{ i }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </section>
+    <section class="footer">
+        <div id="logo">
+            <h1>Welcome to FitBit Event Finder</h1>
+        </div>
+    </section>
+</body>
+</html>

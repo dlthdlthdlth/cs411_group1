@@ -10,10 +10,10 @@ mysql = MySQL()
 app = Flask(__name__)
 app.secret_key = 'still a secret'
 
-# These will need to be changed according to your creditionals
+# These will need to be changed according to your creditionals, app will not run without a database
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'change'
-app.config['MYSQL_DATABASE_DB'] = 'change'
+app.config['MYSQL_DATABASE_DB'] = 'fitbit'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
@@ -24,27 +24,27 @@ login_manager.init_app(app)
 
 #api search call
 url = "https://www.eventbriteapi.com/v3/events/search/"
-myToken = 'insert token'
+myToken = 'replace and delete'
 head = {'Authorization': 'Bearer {}'.format(myToken)}
 data = {"q": ""}
 
-#example code
+#example code/do not delete
 conn = mysql.connect()
 cursor = conn.cursor()
 cursor.execute("SELECT EMAIL FROM USER")
 users = cursor.fetchall()
 
-#ignore for now
+#ignore/don't delete
 def getUserList():
     cursor = conn.cursor()
     cursor.execute("SELECT EMAIL FROM USER")
     return cursor.fetchall()
 
-#ignore for now
+#ignore/don't delete
 class User(flask_login.UserMixin):
     pass
 
-#ignore for now
+#ignore/don't delete
 @login_manager.user_loader
 def user_loader(email):
     users = getUserList()
@@ -54,7 +54,7 @@ def user_loader(email):
     user.id = email
     return user
 
-#ignore for now
+#ignore/don't delete
 @login_manager.request_loader
 def request_loader(request):
     users = getUserList()
@@ -70,7 +70,7 @@ def request_loader(request):
     user.is_authenticated = request.form['password'] == pwd
     return user
 
-#needs to be changed, but logic may be similar.
+#login route needs to be changed, but logic may be similar.
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method != 'POST':
@@ -103,20 +103,37 @@ def logout():
 def unauthorized_handler():
     return render_template('unauth.html')
 
-#user profile, not yet implemented
+#user profile
 @app.route('/profile')
 #@flask_login.login_required
 def protected():
-    return render_template('profile.html', name=flask_login.current_user.id)
+    return render_template('profile.html')
+
+#get user past events, not finished
+def pastEvents():
+    cursor = conn.cursor()
+    cursor.execute("SELECT ENAME, TYPE, INFO, DATE, TIME, LOCATION FROM PASTEVENTS WHERE UID='{0}'".format())
+    return
+
+#get user future events
+def futureEvents():
+    return
+
+#get user saved events
+def savedEvents():
+    return
+
+#get fitbit activities
+def fitbitactivities():
+    return
 
 #needs to be implemented
-@app.route("/recommendEvents", methods=['GET', 'POST'])
 #@flask_login.login_required
 def recommend():
    return
 
 #search events
-@app.route("/searchEvents", methods=['GET', 'POST'])
+@app.route("/searchEvents", methods=['POST'])
 #@flask_login.login_required
 def searchEvents():
     event = flask.request.form['event']

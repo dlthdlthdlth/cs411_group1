@@ -42,6 +42,17 @@
 				<input type='submit' name='submit' class="btn btn-alt"></input>
             </form></br>
     </div>
+    <section class="events">
+        {% if recommendations %}
+            <h1>Recommended Events</h1>
+            <br />
+            <ul>
+                {% for i in recommendations %}
+                    <li>{{ i }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </section>
     <section class="footer">
         <div id="logo">
             <h1>Welcome to FitBit Event Finder</h1>
