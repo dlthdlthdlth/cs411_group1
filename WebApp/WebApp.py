@@ -5,6 +5,7 @@ from flaskext.mysql import MySQL
 import time
 import flask.ext.login as flask_login
 import json
+import base64
 
 mysql = MySQL()
 app = Flask(__name__)
@@ -12,10 +13,18 @@ app.secret_key = 'still a secret'
 
 # These will need to be changed according to your creditionals, app will not run without a database
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'change'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'database_dude'
 app.config['MYSQL_DATABASE_DB'] = 'fitbit'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
+
+#Fitbit api information
+redirect_uri = "http://127.0.0.1:5000/callback"
+client_id = "22CMVP"
+client_secret = "7dea60be5733957b72a3ebc7859ee6d2"
+
+access_token = ""  #gets updated later
+refresh_token = "" #gets updated later
 
 #code used for login
 #will be changed to use fitbit login api
@@ -23,8 +32,8 @@ login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
 #api search call
-url = "https://www.eventbriteapi.com/v3/events/search/"
-myToken = 'replace and delete'
+eventbrite_url = "https://www.eventbriteapi.com/v3/events/search/"
+myToken = 'MHPPXZ3TBMC6E47PBCYK'
 head = {'Authorization': 'Bearer {}'.format(myToken)}
 data = {"q": ""}
 
@@ -70,27 +79,57 @@ def request_loader(request):
     user.is_authenticated = request.form['password'] == pwd
     return user
 
-#login route needs to be changed, but logic may be similar.
-@app.route('/login', methods=['POST', 'GET'])
+@app.route('/login')
 def login():
-    if request.method != 'POST':
-        return render_template('login.html', message='Login')
-    else:
-        # The request method is POST (page is recieving data)
-        email = flask.request.form['email']
-        cursor = conn.cursor()
-        # check if email is registered
-        if cursor.execute("SELECT PASSWORD FROM USER WHERE EMAIL= '{0}'".format(email)):
-            data = cursor.fetchall()
-            pwd = str(data[0][0])
-            if flask.request.form['password'] == pwd:
-                user = User()
-                user.id = email
-                flask_login.login_user(user)  # okay login in user
-                return flask.redirect(flask.url_for('protected'))  # protected is a function defined in this file
+    url = "https://www.fitbit.com/oauth2/authorize?response_type=code&client_id="+ client_id + "&redirect_uri=" + redirect_uri + "&scope=activity%20heartrate%20location%20nutrition%20profile%20settings%20sleep%20social%20weight&expires_in=604800"
+    return redirect(url)
 
-        # information did not match
-        return render_template('login.html', message="Incorrect Username or Password, please try again")
+#Gets access token once user has granted permission for the app to use Fitbit
+@app.route('/callback', methods=['POST', 'GET'])
+def callback():
+
+    auth_header = client_id + ":" + client_secret
+    encoded_auth_header = str((base64.b64encode(auth_header.encode())).decode('utf-8'))
+
+    code = request.url.split("=")[1]
+    url = "https://api.fitbit.com/oauth2/token"
+
+    querystring = {"grant_type":"authorization_code","redirect_uri":redirect_uri,"clientId":client_id,"code": code}
+
+    headers = {'Authorization': 'Basic '+ encoded_auth_header, 'Content-Type': "application/x-www-form-urlencoded"}
+
+    response = requests.request("POST", url, headers=headers, params=querystring)
+
+    access_token = response.text.access_token
+    refresh_token = response.text.refresh_token
+    user_id = response.text.user_id
+
+    print (response.text)
+
+
+    return render_template('test.html',message= "You logged in with Fitbit");
+
+#login route needs to be changed, but logic may be similar.
+# @app.route('/login', methods=['POST', 'GET'])
+# def login():
+#     if request.method != 'POST':
+#         return render_template('login.html', message='Login')
+#     else:
+#         # The request method is POST (page is recieving data)
+#         email = flask.request.form['email']
+#         cursor = conn.cursor()
+#         # check if email is registered
+#         if cursor.execute("SELECT PASSWORD FROM USER WHERE EMAIL= '{0}'".format(email)):
+#             data = cursor.fetchall()
+#             pwd = str(data[0][0])
+#             if flask.request.form['password'] == pwd:
+#                 user = User()
+#                 user.id = email
+#                 flask_login.login_user(user)  # okay login in user
+#                 return flask.redirect(flask.url_for('protected'))  # protected is a function defined in this file
+#
+#         # information did not match
+#         return render_template('login.html', message="Incorrect Username or Password, please try again")
 
 #log out function, needs to be changed
 @app.route('/logout')
@@ -139,7 +178,7 @@ def searchEvents():
     event = flask.request.form['event']
     # city = flask.request.form['city']   ######    needs to be done later
     data['q'] = event
-    myResponse = requests.get(url, headers = head, params=data)
+    myResponse = requests.get(eventbrite_url, headers = head, params=data)
     results = []
     if(myResponse.ok):
         jData = json.loads(myResponse.text)
@@ -165,4 +204,3 @@ def hello():
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
-
