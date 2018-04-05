@@ -20,11 +20,11 @@ mysql.init_app(app)
 
 #Fitbit api information
 redirect_uri = "http://127.0.0.1:5000/callback"
-client_id = "22CMVP"
-client_secret = "7dea60be5733957b72a3ebc7859ee6d2"
+client_id = ""
+client_secret = ""
 
-access_token = ""  #gets updated later
-refresh_token = "" #gets updated later
+access_token = ""  #gets updated in login(), leave blank
+refresh_token = "" #gets updated in login(), leave blank
 
 #code used for login
 #will be changed to use fitbit login api
@@ -33,7 +33,7 @@ login_manager.init_app(app)
 
 #api search call
 eventbrite_url = "https://www.eventbriteapi.com/v3/events/search/"
-myToken = 'MHPPXZ3TBMC6E47PBCYK'
+myToken = ''
 head = {'Authorization': 'Bearer {}'.format(myToken)}
 data = {"q": ""}
 
@@ -81,7 +81,7 @@ def request_loader(request):
 
 @app.route('/login')
 def login():
-    url = "https://www.fitbit.com/oauth2/authorize?response_type=code&client_id="+ client_id + "&redirect_uri=" + redirect_uri + "&scope=activity%20heartrate%20location%20nutrition%20profile%20settings%20sleep%20social%20weight&expires_in=604800"
+    url = "https://www.fitbit.com/oauth2/authorize?response_type=code&client_id="+ client_id + "&redirect_uri=" + redirect_uri + "&scope=activity%20location%20nutrition%20profile%20settings%20sleep%20social%20weight&expires_in=604800"
     return redirect(url)
 
 #Gets access token once user has granted permission for the app to use Fitbit
@@ -100,14 +100,22 @@ def callback():
 
     response = requests.request("POST", url, headers=headers, params=querystring)
 
-    access_token = response.text.access_token
-    refresh_token = response.text.refresh_token
-    user_id = response.text.user_id
-
-    print (response.text)
+    response = json.loads(response.text)
 
 
-    return render_template('test.html',message= "You logged in with Fitbit");
+    access_token = response['access_token']
+    print (access_token)
+    refresh_token = response['refresh_token']
+    print (refresh_token)
+    user_id = response['user_id']
+
+
+    user = User()
+    user.id = user_id
+    flask_login.login_user(user)
+
+    #return flask.redirect(flask.url_for('protected'))  # protected is a function defined in profile route
+    return render_template('test.html', message="You're logged in with Fitbit!")
 
 #login route needs to be changed, but logic may be similar.
 # @app.route('/login', methods=['POST', 'GET'])
@@ -146,6 +154,16 @@ def unauthorized_handler():
 @app.route('/profile')
 #@flask_login.login_required
 def protected():
+    #Not working because flask_login.current_user.id doesn't work
+    # url = "https://api.fitbit.com/1/user/"+ flask_login.current_user.id +"/profile.json"
+    #
+    # headers = {'Authorization': "Bearer " + access_token}
+    # response = requests.request("GET", url, headers=headers)
+    #
+    # response = json.loads(response.text)
+    #
+    # flask_login.current_user.name = response['displayName']
+
     return render_template('profile.html')
 
 #get user past events, not finished
