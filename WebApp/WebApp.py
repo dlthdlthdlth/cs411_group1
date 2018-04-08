@@ -112,17 +112,20 @@ def callback():
     user = User()
     user.id = fbid
     flask_login.login_user(user)
+    session['access_token'] = access_token
 
     return flask.redirect(flask.url_for('protected'))  # protected is a function defined in profile route
     #return render_template('test.html', message="You're logged in with Fitbit!")
 
+
+# If user has never logged into our app before
 @app.route('/register', methods = ['POST', 'GET'])
 @flask_login.login_required
 def register():
     if flask.request.method == 'GET':
         return render_template('register.html')
     else:
-        location=request.form.get('location')
+        location=request.form.get('location') #or users could enter their location on search page, leaving it here as an example
         print (location)
         cursor = conn.cursor()
         cursor.execute("UPDATE USER SET LOCATION = '{0}' WHERE FBID = '{1}'".format(location,flask_login.current_user.id))
@@ -148,6 +151,7 @@ def protected():
         flask_login.current_user.name = response['user']['displayName']
 
         return render_template('profile.html', name=flask_login.current_user.name)
+    #Redirect user to login if they don't have access token
     else:
         return render_template('unauth.html')
 
