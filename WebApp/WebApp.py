@@ -11,73 +11,65 @@ mysql = MySQL()
 app = Flask(__name__)
 app.secret_key = 'still a secret'
 
-# These will need to be changed according to your creditionals, app will not run without a database
+# These will need to be changed according to your credentials, app will not run without a database
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = ''
+app.config['MYSQL_DATABASE_PASSWORD'] = '' #--------------CHANGE----------------
 app.config['MYSQL_DATABASE_DB'] = 'fitbit'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
+
 #Fitbit api information
 redirect_uri = "http://127.0.0.1:5000/callback"
-client_id = ""
-client_secret = ""
+client_id = "" # ---------------CHANGE-----------------
+client_secret = "" # ---------------CHANGE-----------------
 
-access_token = ""  #gets updated in login(), leave blank
-refresh_token = "" #gets updated in login(), leave blank
 
-#code used for login
-#will be changed to use fitbit login api
-login_manager = flask_login.LoginManager()
-login_manager.init_app(app)
-
-#api search call
+#EventBrite api information
 eventbrite_url = "https://www.eventbriteapi.com/v3/events/search/"
-myToken = ''
+myToken = '' # ---------------CHANGE-----------------
 head = {'Authorization': 'Bearer {}'.format(myToken)}
 data = {"q": ""}
 
-#example code/do not delete
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
 conn = mysql.connect()
-cursor = conn.cursor()
-cursor.execute("SELECT EMAIL FROM USER")
-users = cursor.fetchall()
 
-#ignore/don't delete
+session = {}
+
 def getUserList():
     cursor = conn.cursor()
-    cursor.execute("SELECT EMAIL FROM USER")
+    cursor.execute("SELECT FBID FROM USER")
     return cursor.fetchall()
 
-#ignore/don't delete
 class User(flask_login.UserMixin):
     pass
 
-#ignore/don't delete
 @login_manager.user_loader
-def user_loader(email):
+def user_loader(fbid):
     users = getUserList()
-    if not (email) or email not in str(users):
+    if not (fbid) or fbid not in str(users):
         return
     user = User()
-    user.id = email
+    user.id = fbid
     return user
 
-#ignore/don't delete
-@login_manager.request_loader
-def request_loader(request):
-    users = getUserList()
-    email = request.form.get('email')
-    if not (email) or email not in str(users):
-        return
-    user = User()
-    user.id = email
-    cursor = mysql.connect().cursor()
-    cursor.execute("SELECT PASSWORD FROM USER WHERE EMAIL = '{0}'".format(email))
-    data = cursor.fetchall()
-    pwd = str(data[0][0])
-    user.is_authenticated = request.form['password'] == pwd
-    return user
+
+# @login_manager.request_loader
+# def request_loader(request):
+#     users = getUserList()
+#     email = request.form.get('fbid')
+#     if not (email) or email not in str(users):
+#         return
+#     user = User()
+#     user.id = email
+#     cursor = mysql.connect().cursor()
+#     cursor.execute("SELECT PASSWORD FROM USER WHERE EMAIL = '{0}'".format(email))
+#     data = cursor.fetchall()
+#     pwd = str(data[0][0])
+#     user.is_authenticated = request.form['password'] == pwd
+#     return user
+
 
 @app.route('/login')
 def login():
@@ -104,67 +96,71 @@ def callback():
 
 
     access_token = response['access_token']
-    print (access_token)
-    refresh_token = response['refresh_token']
-    print (refresh_token)
-    user_id = response['user_id']
+    session['access_token'] = access_token
 
+    refresh_token = response['refresh_token']
+    session['refresh_token'] = refresh_token
+
+    fbid = response['user_id']
+    users = getUserList()
+    if fbid not in str(users):
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO USER (FBID) VALUES ('{0}')".format(fbid))
+        conn.commit()
+        return flask.redirect(flask.url_for('register'))
 
     user = User()
-    user.id = user_id
+    user.id = fbid
     flask_login.login_user(user)
 
-    #return flask.redirect(flask.url_for('protected'))  # protected is a function defined in profile route
-    return render_template('test.html', message="You're logged in with Fitbit!")
+    return flask.redirect(flask.url_for('protected'))  # protected is a function defined in profile route
+    #return render_template('test.html', message="You're logged in with Fitbit!")
 
-#login route needs to be changed, but logic may be similar.
-# @app.route('/login', methods=['POST', 'GET'])
-# def login():
-#     if request.method != 'POST':
-#         return render_template('login.html', message='Login')
-#     else:
-#         # The request method is POST (page is recieving data)
-#         email = flask.request.form['email']
-#         cursor = conn.cursor()
-#         # check if email is registered
-#         if cursor.execute("SELECT PASSWORD FROM USER WHERE EMAIL= '{0}'".format(email)):
-#             data = cursor.fetchall()
-#             pwd = str(data[0][0])
-#             if flask.request.form['password'] == pwd:
-#                 user = User()
-#                 user.id = email
-#                 flask_login.login_user(user)  # okay login in user
-#                 return flask.redirect(flask.url_for('protected'))  # protected is a function defined in this file
-#
-#         # information did not match
-#         return render_template('login.html', message="Incorrect Username or Password, please try again")
+@app.route('/register', methods = ['POST', 'GET'])
+@flask_login.login_required
+def register():
+    if flask.request.method == 'GET':
+        return render_template('register.html')
+    else:
+        location=request.form.get('location')
+        print (location)
+        cursor = conn.cursor()
+        cursor.execute("UPDATE USER SET LOCATION = '{0}' WHERE FBID = '{1}'".format(location,flask_login.current_user.id))
+        conn.commit()
+        return redirect(flask.url_for('protected'))
 
-#log out function, needs to be changed
+
+@app.route('/profile')
+@flask_login.login_required
+def protected():
+    #Check if user has access token before making api call to fitbit
+    if (session.get('access_token', None)):
+        print (session.get('access_token', None))
+        url = "https://api.fitbit.com/1/user/"+ flask_login.current_user.id +"/profile.json"
+
+        access_token = session.get('access_token', None)
+        headers = {'Authorization': "Bearer " + access_token}
+
+        response = requests.request("GET", url, headers=headers)
+
+        response = json.loads(response.text)
+
+        flask_login.current_user.name = response['user']['displayName']
+
+        return render_template('profile.html', name=flask_login.current_user.name)
+    else:
+        return render_template('unauth.html')
+
+
 @app.route('/logout')
 def logout():
     flask_login.logout_user()
     return render_template('homepage.html', message='Logged out')
 
-#unathorized
+
 @login_manager.unauthorized_handler
 def unauthorized_handler():
     return render_template('unauth.html')
-
-#user profile
-@app.route('/profile')
-#@flask_login.login_required
-def protected():
-    #Not working because flask_login.current_user.id doesn't work
-    # url = "https://api.fitbit.com/1/user/"+ flask_login.current_user.id +"/profile.json"
-    #
-    # headers = {'Authorization': "Bearer " + access_token}
-    # response = requests.request("GET", url, headers=headers)
-    #
-    # response = json.loads(response.text)
-    #
-    # flask_login.current_user.name = response['displayName']
-
-    return render_template('profile.html')
 
 #get user past events, not finished
 def pastEvents():
@@ -214,10 +210,12 @@ def searchEvents():
 
     return render_template('searchEvents.html', results= results)
 
-#Default route
+
 @app.route("/", methods=['GET'])
 def hello():
     return render_template('homepage.html')
+
+
 
 
 if __name__ == '__main__':
