@@ -50,8 +50,19 @@ def user_loader(fbid):
     users = getUserList()
     if not (fbid) or fbid not in str(users):
         return
+
+    cursor = conn.cursor()
+    cursor.execute("SELECT ACCESS_TOKEN, REFRESH_TOKEN, NAME FROM USER WHERE FBID = '{0}'".format(fbid))
+    data = cursor.fetchall()
+    access_token = str(data[0][0])
+    refresh_token = str(data[0][1])
+    name = str(data[0][2])
+
     user = User()
     user.id = fbid
+    user.access_token = access_token
+    user.refresh_token= refresh_token
+    user.name = name
     return user
 
 
@@ -94,28 +105,34 @@ def callback():
 
     response = json.loads(response.text)
 
-
-    access_token = response['access_token']
-    session['access_token'] = access_token
-
-    refresh_token = response['refresh_token']
-    session['refresh_token'] = refresh_token
-
+    #Get the user's Fitbit id
     fbid = response['user_id']
+    #Get access token to use Fitbit api
+    access_token = response['access_token']
+    #Get refresh token to refresh the access token once it expires (not implemented yet)
+    refresh_token = response['refresh_token']
+
     users = getUserList()
+    #If user hasn't logged into our app before
     if fbid not in str(users):
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO USER (FBID) VALUES ('{0}')".format(fbid))
-        conn.commit()
+        registerUser(fbid, access_token, refresh_token)
         return flask.redirect(flask.url_for('register'))
 
+
+    insertAccessToken(fbid, access_token)
+    insertRefreshToken(fbid, refresh_token)
+    user_name =  getUserName(fbid, access_token)
+
+    #Create a user instance and log the user in
     user = User()
     user.id = fbid
+    user.access_token = access_token
+    user.refresh_token = refresh_token
+    user.name = user_name
     flask_login.login_user(user)
-    session['access_token'] = access_token
+
 
     return flask.redirect(flask.url_for('protected'))  # protected is a function defined in profile route
-    #return render_template('test.html', message="You're logged in with Fitbit!")
 
 
 # If user has never logged into our app before
@@ -136,25 +153,22 @@ def register():
 @app.route('/profile')
 @flask_login.login_required
 def protected():
-    #Check if user has access token before making api call to fitbit
-    if (session.get('access_token', None)):
-        print (session.get('access_token', None))
-        url = "https://api.fitbit.com/1/user/"+ flask_login.current_user.id +"/profile.json"
 
-        access_token = session.get('access_token', None)
-        headers = {'Authorization': "Bearer " + access_token}
+    #Get fitbit user's fitbit activities
+    url = "https://api.fitbit.com/1/user/"+ flask_login.current_user.id +"/activities/list.json?afterDate=2005-01-01&sort=desc&limit=20&offset=0"
+    headers = {'Authorization': "Bearer " + flask_login.current_user.access_token}
+    response = requests.request("GET", url, headers=headers)
+    response = json.loads(response.text)
 
-        response = requests.request("GET", url, headers=headers)
+    activities = []
 
-        response = json.loads(response.text)
+    for activity in response['activities']:
+        activities.append(activity['activityName'])
 
-        flask_login.current_user.name = response['user']['displayName']
+    #Need to insert activities into database
 
-        return render_template('profile.html', name=flask_login.current_user.name)
-    #Redirect user to login if they don't have access token
-    else:
-        return render_template('unauth.html')
 
+    return render_template('profile.html', name=flask_login.current_user.name, activities = activities)
 
 @app.route('/logout')
 def logout():
@@ -165,6 +179,50 @@ def logout():
 @login_manager.unauthorized_handler
 def unauthorized_handler():
     return render_template('unauth.html')
+
+def registerUser(fbid, access_token, refresh_token):
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO USER (FBID) VALUES ('{0}')".format(fbid))
+    conn.commit()
+    insertAccessToken(fbid,access_token)
+    insertRefreshToken(fbid, refresh_token)
+    user_name = getUserName(fbid, access_token)
+
+    #Create a user instance and log the user in
+    user = User()
+    user.id = fbid
+    user.access_token = access_token
+    user.refresh_token = refresh_token
+    user.name = user_name
+    flask_login.login_user(user)
+
+
+def insertAccessToken(fbid, access_token):
+    cursor = conn.cursor()
+    cursor.execute("UPDATE USER SET ACCESS_TOKEN = '{0}' WHERE FBID = '{1}'".format(access_token, fbid))
+    conn.commit()
+
+def insertRefreshToken(fbid, refresh_token):
+    cursor = conn.cursor()
+    cursor.execute("UPDATE USER SET REFRESH_TOKEN = '{0}' WHERE FBID = '{1}'".format(refresh_token, fbid))
+    conn.commit()
+
+#Get username and store it in database
+def getUserName(fbid, access_token):
+    url = "https://api.fitbit.com/1/user/"+ fbid +"/profile.json"
+    headers = {'Authorization': "Bearer " + access_token}
+    response = requests.request("GET", url, headers=headers)
+    response = json.loads(response.text)
+    user_name = response['user']['displayName']
+    cursor = conn.cursor()
+    cursor.execute("UPDATE USER SET NAME = '{0}' WHERE FBID = '{1}'".format(user_name, fbid))
+    conn.commit()
+    return user_name
+
+
+
+
+
 
 #get user past events, not finished
 def pastEvents():

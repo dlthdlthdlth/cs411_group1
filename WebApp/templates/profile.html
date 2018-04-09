@@ -21,11 +21,11 @@
     <br />
     <br />
     <section class="events">
-        {% if fitbit %}
+        {% if activities %}
             <h1>My FitBit Activities</h1>
             <ul>
-                {% for i in fitbit %}
-                <li>{{ i }}</li>
+                {% for activity in activities %}
+                <li>{{ activity }}</li>
                 {% endfor %}
             </ul>
         {% endif %}
