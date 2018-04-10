@@ -126,9 +126,6 @@ def callback():
     #Create a user instance and log the user in
     user = User()
     user.id = fbid
-    user.access_token = access_token
-    user.refresh_token = refresh_token
-    user.name = user_name
     flask_login.login_user(user)
 
 
@@ -154,18 +151,7 @@ def register():
 @flask_login.login_required
 def protected():
 
-    #Get fitbit user's fitbit activities
-    url = "https://api.fitbit.com/1/user/"+ flask_login.current_user.id +"/activities/list.json?afterDate=2005-01-01&sort=desc&limit=20&offset=0"
-    headers = {'Authorization': "Bearer " + flask_login.current_user.access_token}
-    response = requests.request("GET", url, headers=headers)
-    response = json.loads(response.text)
-
-    activities = []
-
-    for activity in response['activities']:
-        activities.append(activity['activityName'])
-
-    #Need to insert activities into database
+    activities = getActivities()
 
 
     return render_template('profile.html', name=flask_login.current_user.name, activities = activities)
@@ -191,9 +177,6 @@ def registerUser(fbid, access_token, refresh_token):
     #Create a user instance and log the user in
     user = User()
     user.id = fbid
-    user.access_token = access_token
-    user.refresh_token = refresh_token
-    user.name = user_name
     flask_login.login_user(user)
 
 
@@ -239,8 +222,19 @@ def savedEvents():
     return
 
 #get fitbit activities
-def fitbitactivities():
-    return
+def getActivities():
+    url = "https://api.fitbit.com/1/user/"+ flask_login.current_user.id +"/activities/list.json?afterDate=2005-01-01&sort=desc&limit=20&offset=0"
+    headers = {'Authorization': "Bearer " + flask_login.current_user.access_token}
+    response = requests.request("GET", url, headers=headers)
+    response = json.loads(response.text)
+
+    activities = []
+
+    for activity in response['activities']:
+        activities.append(activity['activityName'])
+
+    #Need to insert activities into database
+    return activities
 
 #needs to be implemented
 #@flask_login.login_required
