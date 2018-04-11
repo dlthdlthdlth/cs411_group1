@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>home</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='Webapp.css') }}">
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,500,700|Oswald:300,400,700" rel="stylesheet">
 </head>
 <body>
@@ -29,7 +29,7 @@
         <a href='/logout'>Logout</a>
     </nav>
     <br />
-    <div id="content">
+    <section class="searchbar">
         <br/>
             <form action='/searchEvents' method='POST'>
                 <label for="event">Search For Events!</label>
@@ -40,8 +40,10 @@
                 <br/>
                 <br/>
 				<input type='submit' name='submit' class="btn btn-alt"></input>
-            </form></br>
-    </div>
+            </form>
+        <br/>
+    </section>
+    <br />
     <section class="events">
         {% if recommendations %}
             <h1>Recommended Events</h1>
@@ -53,6 +55,7 @@
             </ul>
         {% endif %}
     </section>
+    <br />
     <section class="footer">
         <div id="logo">
             <h1>Welcome to FitBit Event Finder</h1>
