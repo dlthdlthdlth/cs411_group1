@@ -6,7 +6,7 @@ import time
 import flask.ext.login as flask_login
 import json
 import base64
-
+import re
 mysql = MySQL()
 app = Flask(__name__)
 app.secret_key = 'still a secret'
@@ -23,7 +23,6 @@ mysql.init_app(app)
 redirect_uri = "http://127.0.0.1:5000/callback"
 client_id = "" # ---------------CHANGE-----------------
 client_secret = "" # ---------------CHANGE-----------------
-
 
 #EventBrite api information
 eventbrite_url = "https://www.eventbriteapi.com/v3/events/search/"
@@ -57,6 +56,11 @@ def user_loader(fbid):
     access_token = str(data[0][0])
     refresh_token = str(data[0][1])
     name = str(data[0][2])
+    # Get a new access token if current one is expired
+    if isExpired(access_token):
+        new_tokens = refreshToken(fbid, access_token, refresh_token)
+        access_token = new_tokens[0]
+        refresh_token = new_tokens[1]
 
     user = User()
     user.id = fbid
@@ -84,7 +88,7 @@ def user_loader(fbid):
 
 @app.route('/login')
 def login():
-    url = "https://www.fitbit.com/oauth2/authorize?response_type=code&client_id="+ client_id + "&redirect_uri=" + redirect_uri + "&scope=activity%20location%20nutrition%20profile%20settings%20sleep%20social%20weight&expires_in=604800"
+    url = "https://www.fitbit.com/oauth2/authorize?response_type=code&client_id="+ client_id + "&redirect_uri=" + redirect_uri + "&scope=activity%20location%20nutrition%20profile%20settings%20sleep%20social%20weight&expires_in=28800"
     return redirect(url)
 
 #Gets access token once user has granted permission for the app to use Fitbit
@@ -109,7 +113,7 @@ def callback():
     fbid = response['user_id']
     #Get access token to use Fitbit api
     access_token = response['access_token']
-    #Get refresh token to refresh the access token once it expires (not implemented yet)
+    #Get refresh token to refresh the access token once it expires
     refresh_token = response['refresh_token']
 
     users = getUserList()
@@ -117,7 +121,6 @@ def callback():
     if fbid not in str(users):
         registerUser(fbid, access_token, refresh_token)
         return flask.redirect(flask.url_for('register'))
-
 
     insertAccessToken(fbid, access_token)
     insertRefreshToken(fbid, refresh_token)
@@ -127,7 +130,6 @@ def callback():
     user = User()
     user.id = fbid
     flask_login.login_user(user)
-
 
     return flask.redirect(flask.url_for('protected'))  # protected is a function defined in profile route
 
@@ -140,7 +142,6 @@ def register():
         return render_template('register.html')
     else:
         location=request.form.get('location') #or users could enter their location on search page, leaving it here as an example
-        print (location)
         cursor = conn.cursor()
         cursor.execute("UPDATE USER SET LOCATION = '{0}' WHERE FBID = '{1}'".format(location,flask_login.current_user.id))
         conn.commit()
@@ -156,39 +157,40 @@ def protected():
 
     return render_template('profile.html', name=flask_login.current_user.name, activities = activities)
 
+#search events
+@app.route("/searchEvents", methods=['POST'])
+#@flask_login.login_required
+def searchEvents():
+    event = flask.request.form['event']
+    # city = flask.request.form['city']   ######    needs to be done later
+    data['q'] = event
+    myResponse = requests.get(eventbrite_url, headers = head, params=data)
+    results = []
+    if(myResponse.ok):
+        jData = json.loads(myResponse.text)
+        events = jData['events']
+        for event in events:
+            temp = event['name']
+            temp = temp['text']
+            temp2 = event['description']
+            temp2 = temp2['text']
+            results.append((temp, temp2))
+
+    else:
+        # If response code is not ok (200), print the resulting http error code with description
+        myResponse.raise_for_status()
+
+    return render_template('searchEvents.html', results= results)
+
+
+@app.route("/", methods=['GET'])
+def hello():
+    return render_template('homepage.html')
+
 @app.route('/logout')
 def logout():
     flask_login.logout_user()
     return render_template('homepage.html', message='Logged out')
-
-
-@login_manager.unauthorized_handler
-def unauthorized_handler():
-    return render_template('unauth.html')
-
-def registerUser(fbid, access_token, refresh_token):
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO USER (FBID) VALUES ('{0}')".format(fbid))
-    conn.commit()
-    insertAccessToken(fbid,access_token)
-    insertRefreshToken(fbid, refresh_token)
-    user_name = getUserName(fbid, access_token)
-
-    #Create a user instance and log the user in
-    user = User()
-    user.id = fbid
-    flask_login.login_user(user)
-
-
-def insertAccessToken(fbid, access_token):
-    cursor = conn.cursor()
-    cursor.execute("UPDATE USER SET ACCESS_TOKEN = '{0}' WHERE FBID = '{1}'".format(access_token, fbid))
-    conn.commit()
-
-def insertRefreshToken(fbid, refresh_token):
-    cursor = conn.cursor()
-    cursor.execute("UPDATE USER SET REFRESH_TOKEN = '{0}' WHERE FBID = '{1}'".format(refresh_token, fbid))
-    conn.commit()
 
 #Get username and store it in database
 def getUserName(fbid, access_token):
@@ -201,11 +203,6 @@ def getUserName(fbid, access_token):
     cursor.execute("UPDATE USER SET NAME = '{0}' WHERE FBID = '{1}'".format(user_name, fbid))
     conn.commit()
     return user_name
-
-
-
-
-
 
 #get user past events, not finished
 def pastEvents():
@@ -241,37 +238,77 @@ def getActivities():
 def recommend():
    return
 
-#search events
-@app.route("/searchEvents", methods=['POST'])
-#@flask_login.login_required
-def searchEvents():
-    event = flask.request.form['event']
-    # city = flask.request.form['city']   ######    needs to be done later
-    data['q'] = event
-    myResponse = requests.get(eventbrite_url, headers = head, params=data)
-    results = []
-    if(myResponse.ok):
-        jData = json.loads(myResponse.text)
-        events = jData['events']
-        for event in events:
-            temp = event['name']
-            temp = temp['text']
-            temp2 = event['description']
-            temp2 = temp2['text']
-            results.append((temp, temp2))
+@login_manager.unauthorized_handler
+def unauthorized_handler():
+    return render_template('unauth.html')
 
+def registerUser(fbid, access_token, refresh_token):
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO USER (FBID) VALUES ('{0}')".format(fbid))
+    conn.commit()
+    insertAccessToken(fbid,access_token)
+    insertRefreshToken(fbid, refresh_token)
+    user_name = getUserName(fbid, access_token)
+
+    #Create a user instance and log the user in
+    user = User()
+    user.id = fbid
+    flask_login.login_user(user)
+
+
+def insertAccessToken(fbid, access_token):
+    cursor = conn.cursor()
+    cursor.execute("UPDATE USER SET ACCESS_TOKEN = '{0}' WHERE FBID = '{1}'".format(access_token, fbid))
+    conn.commit()
+
+def insertRefreshToken(fbid, refresh_token):
+    cursor = conn.cursor()
+    cursor.execute("UPDATE USER SET REFRESH_TOKEN = '{0}' WHERE FBID = '{1}'".format(refresh_token, fbid))
+    conn.commit()
+
+#Checks state of current access token by making a call to the Fitbit api
+def isExpired(access_token):
+    headers = {
+    'accept': 'application/json',
+    'content-type': 'application/x-www-form-urlencoded',
+    'Authorization': 'Bearer ' + access_token,
+    }
+    data = [
+      ('token', access_token),
+    ]
+    response = requests.post('https://api.fitbit.com/oauth2/introspect', headers=headers, data=data)
+
+    response = str(response.content.decode("utf-8"))
+    response = re.sub('^[^{]*', '', response)
+
+    response = json.loads(response)
+    active = response['active']
+
+    if active:
+        return False
     else:
-        # If response code is not ok (200), print the resulting http error code with description
-        myResponse.raise_for_status()
+        return True
 
-    return render_template('searchEvents.html', results= results)
+#Refresh the access token and store new access token and refresh token in database
+def refreshToken(fbid, access_token, refresh_token):
 
+    auth_header = client_id + ":" + client_secret
+    encoded_auth_header = str((base64.b64encode(auth_header.encode())).decode('utf-8'))
 
-@app.route("/", methods=['GET'])
-def hello():
-    return render_template('homepage.html')
+    url = "https://api.fitbit.com/oauth2/token"
+    querystring = {"grant_type":"refresh_token","refresh_token": refresh_token, "expires_in": 28800}
+    headers = {'Authorization': 'Basic '+ encoded_auth_header, 'Content-Type': "application/x-www-form-urlencoded"}
 
+    response = requests.request("POST", url, headers=headers, params=querystring)
+    response = json.loads(response.text)
 
+    access_token = response['access_token']
+    refresh_token = response['refresh_token']
+
+    insertAccessToken(fbid, access_token)
+    insertRefreshToken(fbid, refresh_token)
+
+    return [access_token, refresh_token]
 
 
 if __name__ == '__main__':

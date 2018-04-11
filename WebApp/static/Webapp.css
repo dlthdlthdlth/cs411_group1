@@ -24,7 +24,7 @@ footer, header, hgroup, menu, nav, section {
   display: block;
 }
 body {
-  color: #CECECE;
+  color: #000000;
   font: 300 16px/22px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -204,4 +204,3 @@ form {
     text-transform: uppercase;
     font-weight: 100;
 }
-
