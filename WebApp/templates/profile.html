@@ -32,12 +32,17 @@
             </ul>
         {% endif %}
     </section>
+    <br/>
     <section class="events">
         {% if events %}
-            <h1>My Past Events</h1>
+            <h1>Your recommended events:</h1>
             <ul>
-                {% for i in events %}
-                <li>{{ i }}</li>
+                {% for event in events %}
+                  <li>{{ event['name'] }}</li>
+                  <li>{{ event['time'] }}</li>
+                  <li>{{ event['venue'] }}</li>
+                  <li>{{ event['desc'] }}</li>
+                  <br/>
                 {% endfor %}
             </ul>
         {% endif %}
