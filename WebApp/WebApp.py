@@ -13,7 +13,7 @@ app.secret_key = 'still a secret'
 
 # These will need to be changed according to your credentials, app will not run without a database
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '' #--------------CHANGE----------------
+app.config['MYSQL_DATABASE_PASSWORD'] = 'database_dude' #--------------CHANGE----------------
 app.config['MYSQL_DATABASE_DB'] = 'fitbit'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
@@ -21,20 +21,15 @@ mysql.init_app(app)
 
 #Fitbit api information
 redirect_uri = "http://127.0.0.1:5000/callback"
-client_id = "" # ---------------CHANGE-----------------
-client_secret = "" # ---------------CHANGE-----------------
+client_id = "22CMVP" # ---------------CHANGE-----------------
+client_secret = "7dea60be5733957b72a3ebc7859ee6d2" # ---------------CHANGE-----------------
 
 #EventBrite api information
-eventbrite_url = "https://www.eventbriteapi.com/v3/events/search/"
-myToken = '' # ---------------CHANGE-----------------
-head = {'Authorization': 'Bearer {}'.format(myToken)}
-data = {"q": ""}
+eventbrite_token = 'MHPPXZ3TBMC6E47PBCYK' # ---------------CHANGE-----------------
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 conn = mysql.connect()
-
-session = {}
 
 def getUserList():
     cursor = conn.cursor()
@@ -51,11 +46,12 @@ def user_loader(fbid):
         return
 
     cursor = conn.cursor()
-    cursor.execute("SELECT ACCESS_TOKEN, REFRESH_TOKEN, NAME FROM USER WHERE FBID = '{0}'".format(fbid))
+    cursor.execute("SELECT ACCESS_TOKEN, REFRESH_TOKEN, NAME, LOCATION FROM USER WHERE FBID = '{0}'".format(fbid))
     data = cursor.fetchall()
     access_token = str(data[0][0])
     refresh_token = str(data[0][1])
     name = str(data[0][2])
+    location = str(data[0][3])
     # Get a new access token if current one is expired
     if isExpired(access_token):
         new_tokens = refreshToken(fbid, access_token, refresh_token)
@@ -67,8 +63,8 @@ def user_loader(fbid):
     user.access_token = access_token
     user.refresh_token= refresh_token
     user.name = name
+    user.location = location
     return user
-
 
 # @login_manager.request_loader
 # def request_loader(request):
@@ -84,7 +80,6 @@ def user_loader(fbid):
 #     pwd = str(data[0][0])
 #     user.is_authenticated = request.form['password'] == pwd
 #     return user
-
 
 @app.route('/login')
 def login():
@@ -153,34 +148,40 @@ def register():
 def protected():
 
     activities = getActivities()
+    events = recommendEvents()
 
-
-    return render_template('profile.html', name=flask_login.current_user.name, activities = activities)
+    return render_template('profile.html', name=flask_login.current_user.name, activities = activities, events = events)
 
 #search events
-@app.route("/searchEvents", methods=['POST'])
 #@flask_login.login_required
-def searchEvents():
-    event = flask.request.form['event']
+@app.route("/searchEvents", methods=['POST'])
+def searchEventsRoute():
+    results = searchEvents(flask.request.form['search_term'], flask_login.current_user.location)
+    return render_template('searchEvents.html', results= results)
+
+
+def searchEvents(search_term, location):
+    url = "https://www.eventbriteapi.com/v3/events/search/"
+    head = {'Authorization': 'Bearer {}'.format(eventbrite_token)}
+    data = {"q": search_term, "sort_by": "date", "location.address": location, "categories":"108", "expand": "venue" } #108 is fitness category
     # city = flask.request.form['city']   ######    needs to be done later
-    data['q'] = event
-    myResponse = requests.get(eventbrite_url, headers = head, params=data)
+    myResponse = requests.get(url, headers = head, params=data)
     results = []
     if(myResponse.ok):
         jData = json.loads(myResponse.text)
         events = jData['events']
         for event in events:
-            temp = event['name']
-            temp = temp['text']
-            temp2 = event['description']
-            temp2 = temp2['text']
-            results.append((temp, temp2))
+            name = event['name']['text']
+            desc = event['description']['text']
+            time = event['start']['local']
+            venue = event['venue']['address']['address_1']
 
+            results.append({"name":name, "desc": desc, "time":time, "venue":venue})
     else:
         # If response code is not ok (200), print the resulting http error code with description
         myResponse.raise_for_status()
 
-    return render_template('searchEvents.html', results= results)
+    return results
 
 
 @app.route("/", methods=['GET'])
@@ -223,20 +224,34 @@ def getActivities():
     url = "https://api.fitbit.com/1/user/"+ flask_login.current_user.id +"/activities/list.json?afterDate=2005-01-01&sort=desc&limit=20&offset=0"
     headers = {'Authorization': "Bearer " + flask_login.current_user.access_token}
     response = requests.request("GET", url, headers=headers)
+    # print (response.headers)
     response = json.loads(response.text)
 
     activities = []
 
+    cursor = conn.cursor()
     for activity in response['activities']:
         activities.append(activity['activityName'])
-
-    #Need to insert activities into database
+        cursor.execute("INSERT INTO ACTIVITIES (FBID, ACTIVITY) VALUES ('{0}', '{1}') ON DUPLICATE KEY UPDATE ACTIVITY=ACTIVITY;".format(flask_login.current_user.id, activity['activityName']))
+    conn.commit()
     return activities
 
 #needs to be implemented
-#@flask_login.login_required
-def recommend():
-   return
+def recommendEvents():
+    cursor = conn.cursor()
+    cursor.execute("SELECT FBID, ACTIVITY FROM ACTIVITIES WHERE FBID = '{0}'".format(flask_login.current_user.id))
+    data = cursor.fetchall()
+    events = []
+    #call searchEvents() with each of the user's activities
+    for index in range(len(data)):
+        activity = str(data[index][1])
+        event = searchEvents(activity, flask_login.current_user.location)
+        events.append(event)
+
+    #flatten the 2D array into a 1D array
+    events = [event for category in events for event in category]
+
+    return events
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
@@ -282,12 +297,11 @@ def isExpired(access_token):
     response = re.sub('^[^{]*', '', response)
 
     response = json.loads(response)
-    active = response['active']
 
-    if active:
-        return False
-    else:
+    if 'active' not in response:
         return True
+    else:
+        return False
 
 #Refresh the access token and store new access token and refresh token in database
 def refreshToken(fbid, access_token, refresh_token):
