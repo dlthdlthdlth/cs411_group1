@@ -47,13 +47,17 @@
             <h1 class="title">Results</h1>
             <br/>
             <ul>
-                {% for event in results %}
-                  <li>{{ event['name'] }}</li>
-                  <li>{{ event['time'] }}</li>
-                  <li>{{ event['venue'] }}</li>
-                  <li>{{ event['desc'] }}</li>
-                  <br/>
-                {% endfor %}
+              {% for event in results %}
+                <li class = 'event-name'>{{ event['name'] }}</li>
+                <br>
+                <li>{{ event['date'] }}</li>
+                <li>{{ event['venue'] }}</li>
+                <br>
+                <li>{{ event['desc'] }}</li>
+                <br>
+                <li>Eventbrite link: <a href={{ event['link'] }}>{{ event['link'] }}</a></li>
+                <hr>
+              {% endfor %}
             </ul>
         {% endif %}
     </section>

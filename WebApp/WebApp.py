@@ -7,14 +7,15 @@ import flask.ext.login as flask_login
 import json
 import base64
 import re
+from datetime import datetime
 mysql = MySQL()
 app = Flask(__name__)
 app.secret_key = 'still a secret'
 
 # These will need to be changed according to your credentials, app will not run without a database
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '' #--------------CHANGE----------------
-app.config['MYSQL_DATABASE_DB'] = 'fitbit'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'database_dude' #--------------CHANGE----------------
+app.config['MYSQL_DATABASE_DB'] = ''
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
@@ -95,13 +96,9 @@ def callback():
 
     code = request.url.split("=")[1]
     url = "https://api.fitbit.com/oauth2/token"
-
     querystring = {"grant_type":"authorization_code","redirect_uri":redirect_uri,"clientId":client_id,"code": code}
-
     headers = {'Authorization': 'Basic '+ encoded_auth_header, 'Content-Type': "application/x-www-form-urlencoded"}
-
     response = requests.request("POST", url, headers=headers, params=querystring)
-
     response = json.loads(response.text)
 
     #Get the user's Fitbit id
@@ -157,6 +154,7 @@ def protected():
 @app.route("/searchEvents", methods=['POST'])
 def searchEventsRoute():
     results = searchEvents(flask.request.form['search_term'], flask_login.current_user.location)
+    results = [{"name":event[0], "date":reformatDate(event[1]), "venue":event[2], "desc":event[3], "link":event[4], "activity":event[5]} for event in results]
     return render_template('searchEvents.html', results= results)
 
 
@@ -172,16 +170,30 @@ def searchEvents(search_term, location):
         events = jData['events']
         for event in events:
             name = event['name']['text']
-            desc = event['description']['text']
-            time = event['start']['local']
+            date = event['start']['local']
             venue = event['venue']['address']['address_1']
+            if venue == None:
+                venue = "Venue in description."
+            desc = event['description']['text']
+            if desc == None:
+                desc = "No description provided."
+            eventbrite_link = event['url']
+            activity = search_term #the fitbit activity that this event is matched with
 
-            results.append({"name":name, "desc": desc, "time":time, "venue":venue})
+            #results.append({"name":name, "desc": desc, "time":time, "venue":venue, "activity": activity})
+            results.append((name, date, venue, desc, eventbrite_link, activity))
     else:
         # If response code is not ok (200), print the resulting http error code with description
         myResponse.raise_for_status()
 
     return results
+
+# Dates from EventBrite api are in the format '2018-04-21T13:00:00'. reformatDate() turns it into
+# 'April 21 at 1:00PM'
+def reformatDate(date):
+    new_date = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S')
+    new_date = new_date.strftime("%B %-d at %-I:%M%p")
+    return new_date
 
 
 @app.route("/", methods=['GET'])
@@ -236,22 +248,26 @@ def getActivities():
     conn.commit()
     return activities
 
-#needs to be implemented
 def recommendEvents():
     cursor = conn.cursor()
     cursor.execute("SELECT FBID, ACTIVITY FROM ACTIVITIES WHERE FBID = '{0}'".format(flask_login.current_user.id))
-    data = cursor.fetchall()
+    activities = cursor.fetchall()
     events = []
     #call searchEvents() with each of the user's activities
-    for index in range(len(data)):
-        activity = str(data[index][1])
+    for index in range(len(activities)):
+        activity = str(activities[index][1])
         event = searchEvents(activity, flask_login.current_user.location)
         events.append(event)
 
     #flatten the 2D array into a 1D array
     events = [event for category in events for event in category]
+    #sort events by date
+    sorted_events = sorted(events, key=lambda x: x[1])
 
-    return events
+    #Put date in readable format
+    sorted_events = [{"name":event[0], "date":reformatDate(event[1]), "venue":event[2], "desc":event[3], "link":event[4], "activity":event[5]} for event in sorted_events]
+
+    return sorted_events
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
@@ -292,10 +308,8 @@ def isExpired(access_token):
       ('token', access_token),
     ]
     response = requests.post('https://api.fitbit.com/oauth2/introspect', headers=headers, data=data)
-
     response = str(response.content.decode("utf-8"))
     response = re.sub('^[^{]*', '', response)
-
     response = json.loads(response)
 
     if 'active' not in response:
