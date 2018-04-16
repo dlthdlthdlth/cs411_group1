@@ -177,6 +177,10 @@ form {
     margin-top: 40px;
 }
 
+.event-name{
+  font-weight: bold;
+}
+
 #content{
     margin-top: 0px;
     margin-bottom: 20px;

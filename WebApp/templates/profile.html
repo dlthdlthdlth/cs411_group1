@@ -36,13 +36,19 @@
     <section class="events">
         {% if events %}
             <h1>Your recommended events:</h1>
+            <br>
+            <hr>
             <ul>
                 {% for event in events %}
-                  <li>{{ event['name'] }}</li>
-                  <li>{{ event['time'] }}</li>
+                  <li class = 'event-name'>{{ event['name'] }}</li>
+                  <br>
+                  <li>{{ event['date'] }}</li>
                   <li>{{ event['venue'] }}</li>
+                  <br>
                   <li>{{ event['desc'] }}</li>
-                  <br/>
+                  <br>
+                  <li>Eventbrite link: <a href={{ event['link'] }}>{{ event['link'] }}</a></li>
+                  <hr>
                 {% endfor %}
             </ul>
         {% endif %}
