@@ -198,7 +198,7 @@ def reformatDate(date):
 
 @app.route("/", methods=['GET'])
 def hello():
-    return render_template('homepage.html')
+    return render_template('homepage.html', name=flask_login.current_user.name)
 
 @app.route('/logout')
 def logout():
@@ -217,19 +217,29 @@ def getUserName(fbid, access_token):
     conn.commit()
     return user_name
 
-#get user past events, not finished
-def pastEvents():
+#save user events
+@app.route('/saveEvent', methods=["POST"])
+@flask_login.login_required
+def saveEvent():
+    name = flask.request.form["name"]
+    date = flask.request.form["date"]
+    venue = flask.request.form["venue"]
+    link = flask.request.form["link"]
+    fbid = flask_login.current_user.id
     cursor = conn.cursor()
-    cursor.execute("SELECT ENAME, TYPE, INFO, DATE, TIME, LOCATION FROM PASTEVENTS WHERE UID='{0}'".format())
-    return
-
-#get user future events
-def futureEvents():
-    return
+    cursor.execute("INSERT INTO SAVEDEVENTS (FBID, NAME, DATE, VENUE, LINK) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')".format(fbid, name, date, venue, link))
+    conn.commit()
+    return render_template('savedEvents.html', events=getSavedEvents())
 
 #get user saved events
-def savedEvents():
-    return
+@app.route('/savedEvents', methods=["GET"])
+@flask_login.login_required
+def getSavedEvents():
+    fbid = flask_login.current_user.id
+    cursor = conn.cursor()
+    cursor.execute("SELECT FBID, NAME, DATE, VENUE, LINK FROM SAVEDEVENTS WHERE FBID = '{0}'".format(fbid))
+    events = cursor.fetchall()
+    return render_template('savedEvents.html', events= events)
 
 #get fitbit activities
 def getActivities():

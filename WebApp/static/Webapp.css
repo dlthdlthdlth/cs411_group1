@@ -24,7 +24,7 @@ footer, header, hgroup, menu, nav, section {
   display: block;
 }
 body {
-  color: #000000;
+  color: white;
   font: 300 16px/22px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -178,21 +178,25 @@ form {
 }
 
 .event-name{
-  font-weight: bold;
+    font-weight: bold;
+    color: #648880;
+    font-weight: 100;
+    text-align: center;
 }
 
-#content{
-    margin-top: 0px;
-    margin-bottom: 20px;
-}
-
-#cont{
-    margin-top: 20px;
-    margin-bottom: 20px;
+.events {
+    text-align: center;
+    color: #648880;
+    font-weight: 100;
+    width: 100%;
 }
 
 .button{
     margin-top: 10px;
+}
+
+.hidden {
+    visibility: hidden;
 }
 
 /*footer for all pages*/

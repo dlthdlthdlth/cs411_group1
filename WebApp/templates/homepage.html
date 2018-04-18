@@ -26,6 +26,7 @@
     <nav class="navigation">
         <a href='/'>Home</a>
         <a href='/profile'>Profile</a>
+        <a href="/savedEvents">Saved Events</a>
         <a href='/logout'>Logout</a>
     </nav>
     <br />
@@ -42,18 +43,6 @@
 				<input type='submit' name='submit' class="btn btn-alt"></input>
             </form>
         <br/>
-    </section>
-    <br />
-    <section class="events">
-        {% if recommendations %}
-            <h1>Recommended Events</h1>
-            <br />
-            <ul>
-                {% for i in recommendations %}
-                    <li>{{ i }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
     </section>
     <br />
     <section class="footer">
