@@ -50,14 +50,10 @@
                   <br>
                   <li>Eventbrite link: <a href={{ event['link'] }}>{{ event['link'] }}</a></li>
                     <form action='/saveEvent' method='POST'>
-                        <label title="Event">Event Name:</label>
-                        <input type='text' name='name' id='name' required="true"></input>
-                        <label title="Date">Date:</label>
-                        <input type='text' name='date' id='date' required="true"></input>
-                        <label title="Location">Location:</label>
-                        <input type='text' name='venue' id='venue' required="true"></input>
-                        <label title="Link">Link:</label>
-                        <input type='text' name='link' id='link' required="true"></input>
+                        <input type='hidden' name='name' id='name' value='{{ event['name']}}'></input>
+                        <input type='hidden' name='date' id='date' value='{{ event['date']}}'></input>
+                        <input type='hidden' name='venue' id='venue' value='{{ event['venue']}}'></input>
+                        <input type='hidden' name='link' id='link' value='{{ event['link']}}'></input>
                         <input type='submit' value='Save Event' class="btn btn-alt"></input>
                     </form>
                   <hr>

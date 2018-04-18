@@ -15,7 +15,7 @@ app.secret_key = 'still a secret'
 # These will need to be changed according to your credentials, app will not run without a database
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = '' #--------------CHANGE----------------
-app.config['MYSQL_DATABASE_DB'] = ''
+app.config['MYSQL_DATABASE_DB'] = 'fitbit'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
@@ -198,7 +198,10 @@ def reformatDate(date):
 
 @app.route("/", methods=['GET'])
 def hello():
-    return render_template('homepage.html', name=flask_login.current_user.name)
+    if flask_login.current_user.is_authenticated:
+        return render_template('homepage.html', name=flask_login.current_user.name)
+    else:
+        return render_template('homepage.html')
 
 @app.route('/logout')
 def logout():
@@ -221,6 +224,7 @@ def getUserName(fbid, access_token):
 @app.route('/saveEvent', methods=["POST"])
 @flask_login.login_required
 def saveEvent():
+    print (flask.request.form)
     name = flask.request.form["name"]
     date = flask.request.form["date"]
     venue = flask.request.form["venue"]
