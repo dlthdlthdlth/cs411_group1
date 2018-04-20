@@ -14,19 +14,19 @@ app.secret_key = 'still a secret'
 
 # These will need to be changed according to your credentials, app will not run without a database
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '' #--------------CHANGE----------------
-app.config['MYSQL_DATABASE_DB'] = 'fitbit'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'giggaman123' #--------------CHANGE----------------
+app.config['MYSQL_DATABASE_DB'] = 'fitbit3'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
 
 #Fitbit api information
 redirect_uri = "http://127.0.0.1:5000/callback"
-client_id = "" # ---------------CHANGE-----------------
-client_secret = "" # ---------------CHANGE-----------------
+client_id = "22CMVP" # ---------------CHANGE-----------------
+client_secret = "e1839ff5942592bc9192f780efb83cdf" # ---------------CHANGE-----------------
 
 #EventBrite api information
-eventbrite_token = '' # ---------------CHANGE-----------------
+eventbrite_token = 'MHPPXZ3TBMC6E47PBCYK' # ---------------CHANGE-----------------
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
@@ -66,21 +66,6 @@ def user_loader(fbid):
     user.name = name
     user.location = location
     return user
-
-# @login_manager.request_loader
-# def request_loader(request):
-#     users = getUserList()
-#     email = request.form.get('fbid')
-#     if not (email) or email not in str(users):
-#         return
-#     user = User()
-#     user.id = email
-#     cursor = mysql.connect().cursor()
-#     cursor.execute("SELECT PASSWORD FROM USER WHERE EMAIL = '{0}'".format(email))
-#     data = cursor.fetchall()
-#     pwd = str(data[0][0])
-#     user.is_authenticated = request.form['password'] == pwd
-#     return user
 
 @app.route('/login')
 def login():
@@ -153,9 +138,91 @@ def protected():
 #@flask_login.login_required
 @app.route("/searchEvents", methods=['POST'])
 def searchEventsRoute():
-    results = searchEvents(flask.request.form['search_term'], flask_login.current_user.location)
-    results = [{"name":event[0], "date":reformatDate(event[1]), "venue":event[2], "desc":event[3], "link":event[4], "activity":event[5]} for event in results]
-    return render_template('searchEvents.html', results= results)
+    deleteOldResults()
+    cursor = conn.cursor()
+    #check search term cache for term given.
+    searchterm = flask.request.form['search_term']
+    cursor.execute("SELECT COUNT(*) FROM SEARCHTERMCACHE WHERE SID = '{0}'".format(searchterm))
+    result = cursor.fetchall()
+    if(result):
+        #rearrange or update search terms within the table with a new timestamp if outside recent 5 searches
+        if(searchcount() > 5):
+            #greater than 5 searches in the search term table
+            cursor.execute("SELECT SNUM FROM SEARCHTERMCACHE WHERE SID = '{0}'".format(searchterm))
+            position = cursor.fetchall()
+            count = searchcount()
+            print(position)
+            #check if the current term is in the top 5.
+            if(count - position > 5):
+                #term is not in the top 5, delete it from table, replace it within top 5. Make api call and place results in results cache
+                count = searchcount() + 1
+                cursor.execute("DELETE FROM SEARCHTERMCACHE WHERE SID = '{0}'".format(searchterm))
+                stamp = datetime.utcnow()
+                cursor.execute("INSERT INTO SEARCHTERMCACHE (SID, TIME, SNUM) VALUES ('{0}', '{1}', '{2}')".format(searchterm, stamp, count))
+                results = searchEvents(flask.request.form['search_term'], flask_login.current_user.location)
+                searchterm = flask.request.form['search_term']
+                results = [{"name": results[i][0], "date": reformatDate(results[i][1]), "venue": results[i][2],
+                            "desc": results[i][3], "link": results[i][4], "activity": results[i][5], "resNum": i} for i
+                           in range(len(results))]
+
+                # insert search results into the cache.
+                for result in results:
+                    cursor.execute(
+                        "INSERT INTO RESULTCACHE (SID, NAME, DATE, VENUE, DISC, LINK, RNUM) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(
+                            searchterm, result["name"], result["date"], result["venue"], result["desc"], result["link"],
+                            result["resNum"]));
+
+                cursor.commit()
+                return render_template('searchEvents.html', results=results)
+
+            else:
+                #term is in the top 5, update the timestamp and get the results from results cache.
+                stamp = datetime.utcnow()
+                cursor.execute("UPDATE SEARCHTERMCACHE SET TIME = '{0}' WHERE SID = '{1}'".format(stamp, searchterm))
+                cursor.execute("SELECT NAME, DATE, VENUE, DISC, LINK FROM RESULTCACHE WHERE SID = '{0}'".format(searchterm))
+                results = cursor.fetchall()
+                print(results)
+                return render_template('searchEvents.html', results=results)
+
+
+        else:
+            #fewer than 5 searches so, update last time search occured. Then get results from results cache table.
+            stamp = datetime.utcnow()
+            cursor.execute("UPDATE SEARCHTERMCACHE SET TIME = '{0}' WHERE SID = '{1}'".format(stamp, searchterm))
+            cursor.execute("SELECT NAME, DATE, VENUE, DISC, LINK FROM RESULTCACHE WHERE SID = '{0}'".format(searchterm))
+            results = cursor.fetchall()
+            print(results)
+            return render_template('searchEvents.html', results = results)
+
+    else:
+        #insert first instance of search term into cache for terms.
+        stamp = datetime.utcnow()
+        count = searchcount() + 1
+        cursor.execute("INSERT INTO SEARCHTERMCACHE (SID, TIME, SNUM) VALUES ('{0}', '{1}', '{2}')".format(searchterm, stamp , count))
+        results = searchEvents(flask.request.form['search_term'], flask_login.current_user.location)
+        searchterm = flask.request.form['search_term']
+        results = [{"name":results[i][0], "date":reformatDate(results[i][1]), "venue":results[i][2], "desc":results[i][3], "link":results[i][4], "activity":results[i][5], "resNum": i} for i in range(len(results))]
+
+        #insert search results into the cache.
+        for result in results:
+            cursor.execute("INSERT INTO RESULTCACHE (SID, NAME, DATE, VENUE, DISC, LINK, RNUM) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(searchterm, result["name"], result["date"], result["venue"], result["desc"], result["link"], result["resNum"]));
+
+        cursor.commit()
+        return render_template('searchEvents.html', results= results)
+
+def searchcount():
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM SEARCHTERMCACHE")
+    count  = cursor.fetchall()
+    return count
+
+def deleteOldResults():
+    count = searchcount()
+    if(count > 5):
+        diff = count - 5 - 1
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM RESULTSCACHE WHERE SID = '{0}'".format(diff))
+    cursor.commit()
 
 
 def searchEvents(search_term, location):
@@ -224,14 +291,13 @@ def getUserName(fbid, access_token):
 @app.route('/saveEvent', methods=["POST"])
 @flask_login.login_required
 def saveEvent():
-    print (flask.request.form)
-    name = flask.request.form["name"]
-    date = flask.request.form["date"]
-    venue = flask.request.form["venue"]
-    link = flask.request.form["link"]
-    fbid = flask_login.current_user.id
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO SAVEDEVENTS (FBID, NAME, DATE, VENUE, LINK) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')".format(fbid, name, date, venue, link))
+    resnum = flask.request.form["name"]
+    cursor.execute("SELECT SID, NAME, DATE, VENUE, DISC, LINK FROM RESULTCACHE WHERE RNUM = '{0}'".format(resnum))
+    event = cursor.fetchall()
+    print(event)
+    fbid = flask_login.current_user.id
+    cursor.execute("INSERT INTO SAVEDEVENTS (FBID, SID, NAME, DATE, VENUE, DESC, LINK) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(fbid, event[0], event[1], event[2], event[3], event[4], event[5]))
     conn.commit()
     return render_template('savedEvents.html', events=getSavedEvents())
 
@@ -241,7 +307,7 @@ def saveEvent():
 def getSavedEvents():
     fbid = flask_login.current_user.id
     cursor = conn.cursor()
-    cursor.execute("SELECT FBID, NAME, DATE, VENUE, LINK FROM SAVEDEVENTS WHERE FBID = '{0}'".format(fbid))
+    cursor.execute("SELECT FBID, SID, NAME, DATE, VENUE, DESC, LINK FROM SAVEDEVENTS WHERE FBID = '{0}'".format(fbid))
     events = cursor.fetchall()
     return render_template('savedEvents.html', events= events)
 
@@ -343,7 +409,7 @@ def refreshToken(fbid, access_token, refresh_token):
 
     response = requests.request("POST", url, headers=headers, params=querystring)
     response = json.loads(response.text)
-
+    print(response)
     access_token = response['access_token']
     refresh_token = response['refresh_token']
 

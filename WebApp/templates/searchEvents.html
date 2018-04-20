@@ -57,6 +57,10 @@
                 <li>{{ event['desc'] }}</li>
                 <br>
                 <li>Eventbrite link: <a href={{ event['link'] }}>{{ event['link'] }}</a></li>
+                  <form action='/saveEvent' method='POST'>
+                        <input type='hidden' name='name' id='name' value='{{ event['resNum']}}'></input>
+                        <input type='submit' value='Save Event' class="btn btn-alt"></input>
+                    </form>
                 <hr>
               {% endfor %}
             </ul>
