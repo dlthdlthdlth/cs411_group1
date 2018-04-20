@@ -303,7 +303,7 @@ def recommendEvents():
     sorted_events = sorted(events, key=lambda x: x[1])
 
     #Put date in readable format
-    sorted_events = [{"name":event[0], "date":reformatDate(event[1]), "venue":event[2], "desc":event[3], "link":event[4], "activity":event[5]} for event in sorted_events]
+    sorted_events = [{"name":sorted_events[i][0], "date":reformatDate(sorted_events[i][1]), "venue":sorted_events[i][2], "desc":sorted_events[i][3], "link":sorted_events[i][4], "activity":sorted_events[i][5], "resNum": i} for i in range(len(sorted_events))]
 
     return sorted_events
 
