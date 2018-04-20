@@ -1,0 +1,14 @@
+User->Server: Enters search term
+Server-> Cache: Queries cache for search term
+
+Cache-->Server: Return results if term was cached less than 10 minutes ago
+
+
+Server->Eventbrite API: Make request to search endpoint if term not in cache or if cache entry is > 10 minutes old
+Eventbrite API-->Server: Return results
+
+Server -> Cache: Add term to cache with timestamp and results
+
+Server -> Cache: Evict oldest search term if more than 5 are in the cache
+
+Server --> User:Display returned events
