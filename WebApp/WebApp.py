@@ -210,12 +210,14 @@ def searchEventsRoute():
         cursor.commit()
         return render_template('searchEvents.html', results= results)
 
+#helper function
 def searchcount():
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) FROM SEARCHTERMCACHE")
     count  = cursor.fetchall()
     return count
 
+#deletes old results from results cache
 def deleteOldResults():
     count = searchcount()
     if(count > 5):
