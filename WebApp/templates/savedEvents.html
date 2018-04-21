@@ -22,16 +22,17 @@
         {% endif %}
     </section>
     <br>
-    <section class="events">
+    <section class="results">
         {% if events %}
-            <h1>Your Saved Events:</h1>
+            <h1 class="title">Your Saved Events:</h1>
             <br>
             <ul>
                 {% for event in events %}
-                  <li class = 'event-name'>{{ event[1] }}</li>
+                  <li class = 'event-name'>{{ event[0] }}</li>
                   <br>
+                  <li>{{ event[1] }}</li>
                   <li>{{ event[2] }}</li>
-                  <li>{{ event[3] }}</li>
+                    <li>{{ event[3] }}</li>
                   <br>
                   <li>Eventbrite link: <a href={{ event[4] }}>{{ event[4] }}</a></li>
                 <hr>

@@ -47,14 +47,14 @@
             <br/>
             <ul>
               {% for event in results %}
-                <li class = 'event-name'>{{ event['name'] }}</li>
+                <li class = 'event-name'>{{ event[0] }}</li>
                 <br>
-                <li>{{ event['date'] }}</li>
-                <li>{{ event['venue'] }}</li>
+                <li>{{ event[1] }}</li>
+                <li>{{ event[2] }}</li>
                 <br>
-                <li>{{ event['desc'] }}</li>
+                <li>{{ event[3] }}</li>
                 <br>
-                <li>Eventbrite link: <a href={{ event['link'] }}>{{ event['link'] }}</a></li>
+                <li>Eventbrite link: <a href={{ event[4] }}>{{ event[4] }}</a></li>
                   <form action='/saveEvent' method='POST'>
                         <input type='hidden' name='name' id='name' value='{{ event['resNum']}}'></input>
                         <input type='submit' value='Save Event' class="btn btn-alt"></input>

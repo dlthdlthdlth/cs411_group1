@@ -2,7 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="38df8339-cfa1-45e4-9593-8bf4ec700df2" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/templates/searchEvents2.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp.py" afterPath="$PROJECT_DIR$/WebApp.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/schema.sql" afterPath="$PROJECT_DIR$/schema.sql" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/profile.html" afterPath="$PROJECT_DIR$/templates/profile.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/savedEvents.html" afterPath="$PROJECT_DIR$/templates/savedEvents.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/searchEvents.html" afterPath="$PROJECT_DIR$/templates/searchEvents.html" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -12,49 +18,54 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/WebApp$WebApp.coverage" NAME="WebApp Coverage Results" MODIFIED="1524201517916" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/WebApp$WebApp.coverage" NAME="WebApp Coverage Results" MODIFIED="1524279486723" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="WebApp.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/WebApp.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="287">
-              <caret line="305" column="221" lean-forward="false" selection-start-line="305" selection-start-column="221" selection-end-line="305" selection-end-column="221" />
+            <state relative-caret-position="2370">
+              <caret line="158" column="0" lean-forward="true" selection-start-line="158" selection-start-column="0" selection-end-line="158" selection-end-column="0" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
-                <marker date="1524264321961" expanded="true" signature="1108:1129" ph="SELECT FBID USER" />
-                <marker date="1524264321961" expanded="true" signature="1391:1470" ph="SELECT ACCES... USER" />
-                <marker date="1524264321961" expanded="true" signature="4335:4386" ph="UPDATE USER " />
-                <marker date="1524264321961" expanded="true" signature="5020:5097" ph="SELECT COUNT... SEARCHTERMCACHE" />
-                <marker date="1524264321961" expanded="true" signature="5808:5867" ph="INSERT INTO CSID... " />
-                <marker date="1524264321961" expanded="true" signature="5808:5931" ph="INSERT INTO CACHE... " />
-                <marker date="1524264321961" expanded="true" signature="6287:6328" ph="SELECT COUNT... SEARCHTERMCACHE" />
-                <marker date="1524264321961" expanded="true" signature="6586:6615" ph="SELECT * FRO... RESULTSCACHE" />
-                <marker date="1524264321961" expanded="true" signature="6586:6622" ph="SELECT SID F... RESULTSCACHE" />
-                <marker date="1524264321961" expanded="true" signature="6596:6615" ph="DELETE FROM " />
-                <marker date="1524264321961" expanded="true" signature="6723:6765" ph="DELETE FROM " />
-                <marker date="1524264321961" expanded="true" signature="9288:9335" ph="UPDATE USER " />
-                <marker date="1524264321961" expanded="true" signature="9595:9672" ph="SELECT (SID,... RESULTCACHE" />
-                <marker date="1524264321961" expanded="true" signature="9796:9877" ph="INSERT INTO SAVEDEVENTS... " />
-                <marker date="1524264321961" expanded="true" signature="9796:9879" ph="INSERT INTO SAVEDEVENTS... " />
-                <marker date="1524264321961" expanded="true" signature="9796:9884" ph="INSERT INTO SAVEDEVENTS... " />
-                <marker date="1524264321961" expanded="true" signature="9796:9890" ph="INSERT INTO SAVEDEVENTS... " />
-                <marker date="1524264321961" expanded="true" signature="9796:9891" ph="INSERT INTO SAVEDEVENTS... " />
-                <marker date="1524264321961" expanded="true" signature="9796:9897" ph="INSERT INTO SAVEDEVENTS... " />
-                <marker date="1524264321961" expanded="true" signature="9796:9904" ph="INSERT INTO SAVEDEVENTS... " />
-                <marker date="1524264321961" expanded="true" signature="9796:9919" ph="INSERT INTO SAVEDEVENTS... " />
-                <marker date="1524264321961" expanded="true" signature="9819:9876" ph="SELECT DATE,... " />
-                <marker date="1524264321961" expanded="true" signature="10289:10353" ph="SELECT FBID,... " />
-                <marker date="1524264321961" expanded="true" signature="10289:10359" ph="SELECT FBID,... " />
-                <marker date="1524264321961" expanded="true" signature="10289:10364" ph="SELECT FBID,... " />
-                <marker date="1524264321961" expanded="true" signature="10289:10366" ph="SELECT FBID,... " />
-                <marker date="1524264321961" expanded="true" signature="10289:10372" ph="SELECT FBID,... " />
-                <marker date="1524264321961" expanded="true" signature="11058:11161" ph="INSERT INTO ACTIVITIES... " />
-                <marker date="1524264321961" expanded="true" signature="11338:11394" ph="SELECT FBID,... ACTIVITIES" />
-                <marker date="1524264321961" expanded="true" signature="12448:12486" ph="INSERT INTO USER... " />
-                <marker date="1524264321961" expanded="true" signature="12864:12919" ph="UPDATE USER " />
-                <marker date="1524264321961" expanded="true" signature="13060:13116" ph="UPDATE USER " />
+                <marker date="1524279485570" expanded="true" signature="1177:1198" ph="SELECT FBID USER" />
+                <marker date="1524279485570" expanded="true" signature="1460:1539" ph="SELECT ACCES... USER" />
+                <marker date="1524279485570" expanded="true" signature="4404:4455" ph="UPDATE USER " />
+                <marker date="1524279485570" expanded="true" signature="5068:5144" ph="SELECT COUNT... SEARCHTERMCACHE" />
+                <marker date="1524279485570" expanded="true" signature="5929:5987" ph="INSERT INTO CSID... " />
+                <marker date="1524279485570" expanded="true" signature="5929:6051" ph="INSERT INTO CACHE... " />
+                <marker date="1524279485570" expanded="true" signature="6460:6503" ph="SELECT COUNT... SEARCHTERMCACHE" />
+                <marker date="1524279485570" expanded="true" signature="6767:6796" ph="SELECT * FRO... RESULTSCACHE" />
+                <marker date="1524279485570" expanded="true" signature="6767:6803" ph="SELECT SID F... RESULTSCACHE" />
+                <marker date="1524279485570" expanded="true" signature="6777:6796" ph="DELETE FROM " />
+                <marker date="1524279485570" expanded="true" signature="6904:6946" ph="DELETE FROM " />
+                <marker date="1524279485570" expanded="true" signature="9928:9975" ph="UPDATE USER " />
+                <marker date="1524279485570" expanded="true" signature="10218:10294" ph="SELECT (SID,... RESULTCACHE" />
+                <marker date="1524279485570" expanded="true" signature="10418:10498" ph="INSERT INTO SAVEDEVENTS... " />
+                <marker date="1524279485570" expanded="true" signature="10418:10500" ph="INSERT INTO SAVEDEVENTS... " />
+                <marker date="1524279485570" expanded="true" signature="10418:10505" ph="INSERT INTO SAVEDEVENTS... " />
+                <marker date="1524279485570" expanded="true" signature="10418:10511" ph="INSERT INTO SAVEDEVENTS... " />
+                <marker date="1524279485570" expanded="true" signature="10418:10512" ph="INSERT INTO SAVEDEVENTS... " />
+                <marker date="1524279485570" expanded="true" signature="10418:10518" ph="INSERT INTO SAVEDEVENTS... " />
+                <marker date="1524279485570" expanded="true" signature="10418:10525" ph="INSERT INTO SAVEDEVENTS... " />
+                <marker date="1524279485570" expanded="true" signature="10418:10540" ph="INSERT INTO SAVEDEVENTS... " />
+                <marker date="1524279485570" expanded="true" signature="10441:10497" ph="SELECT DATE,... " />
+                <marker date="1524279485570" expanded="true" signature="10893:10945" ph="SELECT FBID,... " />
+                <marker date="1524279485570" expanded="true" signature="10893:10951" ph="SELECT FBID,... " />
+                <marker date="1524279485570" expanded="true" signature="10893:10956" ph="SELECT FBID,... " />
+                <marker date="1524279485570" expanded="true" signature="10893:10958" ph="SELECT FBID,... " />
+                <marker date="1524279485570" expanded="true" signature="10893:10964" ph="SELECT FBID,... " />
+                <marker date="1524279485570" expanded="true" signature="11665:11768" ph="INSERT INTO ACTIVITIES... " />
+                <marker date="1524279485570" expanded="true" signature="12039:12095" ph="SELECT FBID,... ACTIVITIES" />
+                <marker date="1524279485570" expanded="true" signature="13001:13115" ph="INSERT INTO RECOMMENDATIONS... " />
+                <marker date="1524279485570" expanded="true" signature="13320:13347" ph="DELETE FROM " />
+                <marker date="1524279485570" expanded="true" signature="13574:13649" ph="SELECT NAME,... " />
+                <marker date="1524279485570" expanded="true" signature="13768:13878" ph="INSERT INTO SAVEDEVENTS... " />
+                <marker date="1524279485570" expanded="true" signature="14134:14205" ph="SELECT NAME,... " />
+                <marker date="1524279485570" expanded="true" signature="14476:14514" ph="INSERT INTO USER... " />
+                <marker date="1524279485570" expanded="true" signature="14892:14947" ph="UPDATE USER " />
+                <marker date="1524279485570" expanded="true" signature="15088:15144" ph="UPDATE USER " />
               </folding>
             </state>
           </provider>
@@ -63,8 +74,28 @@
       <file leaf-file-name="schema.sql" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/schema.sql">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="217">
-              <caret line="36" column="2" lean-forward="false" selection-start-line="36" selection-start-column="2" selection-end-line="36" selection-end-column="2" />
+            <state relative-caret-position="308">
+              <caret line="41" column="20" lean-forward="true" selection-start-line="41" selection-start-column="20" selection-end-line="41" selection-end-column="20" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="searchEvents.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/searchEvents.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="205">
+              <caret line="48" column="40" lean-forward="true" selection-start-line="48" selection-start-column="40" selection-end-line="48" selection-end-column="40" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Webapp.css" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/static/Webapp.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="284">
+              <caret line="187" column="11" lean-forward="true" selection-start-line="187" selection-start-column="11" selection-end-line="187" selection-end-column="11" />
               <folding />
             </state>
           </provider>
@@ -90,11 +121,12 @@
         <option value="$PROJECT_DIR$/templates/register.html" />
         <option value="$PROJECT_DIR$/templates/unauth.html" />
         <option value="$PROJECT_DIR$/templates/homepage.html" />
-        <option value="$PROJECT_DIR$/templates/savedEvents.html" />
         <option value="$PROJECT_DIR$/static/Webapp.css" />
         <option value="$PROJECT_DIR$/templates/profile.html" />
-        <option value="$PROJECT_DIR$/templates/searchEvents.html" />
         <option value="$PROJECT_DIR$/schema.sql" />
+        <option value="$PROJECT_DIR$/templates/searchEvents.html" />
+        <option value="$PROJECT_DIR$/templates/savedEvents.html" />
+        <option value="$PROJECT_DIR$/templates/searchEvents2.html" />
         <option value="$PROJECT_DIR$/WebApp.py" />
       </list>
     </option>
@@ -333,38 +365,43 @@
           <caret line="28" column="20" lean-forward="false" selection-start-line="28" selection-start-column="20" selection-end-line="28" selection-end-column="20" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
-            <marker date="1524264321961" expanded="true" signature="1108:1129" ph="SELECT FBID USER" />
-            <marker date="1524264321961" expanded="true" signature="1391:1470" ph="SELECT ACCES... USER" />
-            <marker date="1524264321961" expanded="true" signature="4335:4386" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="5020:5097" ph="SELECT COUNT... SEARCHTERMCACHE" />
-            <marker date="1524264321961" expanded="true" signature="5808:5867" ph="INSERT INTO CSID... " />
-            <marker date="1524264321961" expanded="true" signature="5808:5931" ph="INSERT INTO CACHE... " />
-            <marker date="1524264321961" expanded="true" signature="6287:6328" ph="SELECT COUNT... SEARCHTERMCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6586:6615" ph="SELECT * FRO... RESULTSCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6586:6622" ph="SELECT SID F... RESULTSCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6596:6615" ph="DELETE FROM " />
-            <marker date="1524264321961" expanded="true" signature="6723:6765" ph="DELETE FROM " />
-            <marker date="1524264321961" expanded="true" signature="9288:9335" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="9595:9672" ph="SELECT (SID,... RESULTCACHE" />
-            <marker date="1524264321961" expanded="true" signature="9796:9877" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9879" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9884" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9890" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9891" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9897" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9904" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9919" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9819:9876" ph="SELECT DATE,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10353" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10359" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10364" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10366" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10372" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="11058:11161" ph="INSERT INTO ACTIVITIES... " />
-            <marker date="1524264321961" expanded="true" signature="11338:11394" ph="SELECT FBID,... ACTIVITIES" />
-            <marker date="1524264321961" expanded="true" signature="12448:12486" ph="INSERT INTO USER... " />
-            <marker date="1524264321961" expanded="true" signature="12864:12919" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="13060:13116" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="1177:1198" ph="SELECT FBID USER" />
+            <marker date="1524279485570" expanded="true" signature="1460:1539" ph="SELECT ACCES... USER" />
+            <marker date="1524279485570" expanded="true" signature="4404:4455" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="5068:5144" ph="SELECT COUNT... SEARCHTERMCACHE" />
+            <marker date="1524279485570" expanded="true" signature="5929:5987" ph="INSERT INTO CSID... " />
+            <marker date="1524279485570" expanded="true" signature="5929:6051" ph="INSERT INTO CACHE... " />
+            <marker date="1524279485570" expanded="true" signature="6460:6503" ph="SELECT COUNT... SEARCHTERMCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6767:6796" ph="SELECT * FRO... RESULTSCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6767:6803" ph="SELECT SID F... RESULTSCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6777:6796" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="6904:6946" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="9928:9975" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="10218:10294" ph="SELECT (SID,... RESULTCACHE" />
+            <marker date="1524279485570" expanded="true" signature="10418:10498" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10500" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10505" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10511" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10512" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10518" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10525" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10540" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10441:10497" ph="SELECT DATE,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10945" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10951" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10956" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10958" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10964" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="11665:11768" ph="INSERT INTO ACTIVITIES... " />
+            <marker date="1524279485570" expanded="true" signature="12039:12095" ph="SELECT FBID,... ACTIVITIES" />
+            <marker date="1524279485570" expanded="true" signature="13001:13115" ph="INSERT INTO RECOMMENDATIONS... " />
+            <marker date="1524279485570" expanded="true" signature="13320:13347" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="13574:13649" ph="SELECT NAME,... " />
+            <marker date="1524279485570" expanded="true" signature="13768:13878" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="14134:14205" ph="SELECT NAME,... " />
+            <marker date="1524279485570" expanded="true" signature="14476:14514" ph="INSERT INTO USER... " />
+            <marker date="1524279485570" expanded="true" signature="14892:14947" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="15088:15144" ph="UPDATE USER " />
           </folding>
         </state>
       </provider>
@@ -423,38 +460,43 @@
           <caret line="15" column="41" lean-forward="false" selection-start-line="15" selection-start-column="41" selection-end-line="15" selection-end-column="41" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
-            <marker date="1524264321961" expanded="true" signature="1108:1129" ph="SELECT FBID USER" />
-            <marker date="1524264321961" expanded="true" signature="1391:1470" ph="SELECT ACCES... USER" />
-            <marker date="1524264321961" expanded="true" signature="4335:4386" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="5020:5097" ph="SELECT COUNT... SEARCHTERMCACHE" />
-            <marker date="1524264321961" expanded="true" signature="5808:5867" ph="INSERT INTO CSID... " />
-            <marker date="1524264321961" expanded="true" signature="5808:5931" ph="INSERT INTO CACHE... " />
-            <marker date="1524264321961" expanded="true" signature="6287:6328" ph="SELECT COUNT... SEARCHTERMCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6586:6615" ph="SELECT * FRO... RESULTSCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6586:6622" ph="SELECT SID F... RESULTSCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6596:6615" ph="DELETE FROM " />
-            <marker date="1524264321961" expanded="true" signature="6723:6765" ph="DELETE FROM " />
-            <marker date="1524264321961" expanded="true" signature="9288:9335" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="9595:9672" ph="SELECT (SID,... RESULTCACHE" />
-            <marker date="1524264321961" expanded="true" signature="9796:9877" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9879" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9884" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9890" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9891" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9897" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9904" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9919" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9819:9876" ph="SELECT DATE,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10353" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10359" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10364" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10366" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10372" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="11058:11161" ph="INSERT INTO ACTIVITIES... " />
-            <marker date="1524264321961" expanded="true" signature="11338:11394" ph="SELECT FBID,... ACTIVITIES" />
-            <marker date="1524264321961" expanded="true" signature="12448:12486" ph="INSERT INTO USER... " />
-            <marker date="1524264321961" expanded="true" signature="12864:12919" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="13060:13116" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="1177:1198" ph="SELECT FBID USER" />
+            <marker date="1524279485570" expanded="true" signature="1460:1539" ph="SELECT ACCES... USER" />
+            <marker date="1524279485570" expanded="true" signature="4404:4455" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="5068:5144" ph="SELECT COUNT... SEARCHTERMCACHE" />
+            <marker date="1524279485570" expanded="true" signature="5929:5987" ph="INSERT INTO CSID... " />
+            <marker date="1524279485570" expanded="true" signature="5929:6051" ph="INSERT INTO CACHE... " />
+            <marker date="1524279485570" expanded="true" signature="6460:6503" ph="SELECT COUNT... SEARCHTERMCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6767:6796" ph="SELECT * FRO... RESULTSCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6767:6803" ph="SELECT SID F... RESULTSCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6777:6796" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="6904:6946" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="9928:9975" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="10218:10294" ph="SELECT (SID,... RESULTCACHE" />
+            <marker date="1524279485570" expanded="true" signature="10418:10498" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10500" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10505" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10511" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10512" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10518" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10525" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10540" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10441:10497" ph="SELECT DATE,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10945" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10951" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10956" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10958" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10964" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="11665:11768" ph="INSERT INTO ACTIVITIES... " />
+            <marker date="1524279485570" expanded="true" signature="12039:12095" ph="SELECT FBID,... ACTIVITIES" />
+            <marker date="1524279485570" expanded="true" signature="13001:13115" ph="INSERT INTO RECOMMENDATIONS... " />
+            <marker date="1524279485570" expanded="true" signature="13320:13347" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="13574:13649" ph="SELECT NAME,... " />
+            <marker date="1524279485570" expanded="true" signature="13768:13878" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="14134:14205" ph="SELECT NAME,... " />
+            <marker date="1524279485570" expanded="true" signature="14476:14514" ph="INSERT INTO USER... " />
+            <marker date="1524279485570" expanded="true" signature="14892:14947" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="15088:15144" ph="UPDATE USER " />
           </folding>
         </state>
       </provider>
@@ -504,38 +546,43 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
-            <marker date="1524264321961" expanded="true" signature="1108:1129" ph="SELECT FBID USER" />
-            <marker date="1524264321961" expanded="true" signature="1391:1470" ph="SELECT ACCES... USER" />
-            <marker date="1524264321961" expanded="true" signature="4335:4386" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="5020:5097" ph="SELECT COUNT... SEARCHTERMCACHE" />
-            <marker date="1524264321961" expanded="true" signature="5808:5867" ph="INSERT INTO CSID... " />
-            <marker date="1524264321961" expanded="true" signature="5808:5931" ph="INSERT INTO CACHE... " />
-            <marker date="1524264321961" expanded="true" signature="6287:6328" ph="SELECT COUNT... SEARCHTERMCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6586:6615" ph="SELECT * FRO... RESULTSCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6586:6622" ph="SELECT SID F... RESULTSCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6596:6615" ph="DELETE FROM " />
-            <marker date="1524264321961" expanded="true" signature="6723:6765" ph="DELETE FROM " />
-            <marker date="1524264321961" expanded="true" signature="9288:9335" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="9595:9672" ph="SELECT (SID,... RESULTCACHE" />
-            <marker date="1524264321961" expanded="true" signature="9796:9877" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9879" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9884" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9890" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9891" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9897" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9904" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9919" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9819:9876" ph="SELECT DATE,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10353" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10359" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10364" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10366" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10372" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="11058:11161" ph="INSERT INTO ACTIVITIES... " />
-            <marker date="1524264321961" expanded="true" signature="11338:11394" ph="SELECT FBID,... ACTIVITIES" />
-            <marker date="1524264321961" expanded="true" signature="12448:12486" ph="INSERT INTO USER... " />
-            <marker date="1524264321961" expanded="true" signature="12864:12919" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="13060:13116" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="1177:1198" ph="SELECT FBID USER" />
+            <marker date="1524279485570" expanded="true" signature="1460:1539" ph="SELECT ACCES... USER" />
+            <marker date="1524279485570" expanded="true" signature="4404:4455" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="5068:5144" ph="SELECT COUNT... SEARCHTERMCACHE" />
+            <marker date="1524279485570" expanded="true" signature="5929:5987" ph="INSERT INTO CSID... " />
+            <marker date="1524279485570" expanded="true" signature="5929:6051" ph="INSERT INTO CACHE... " />
+            <marker date="1524279485570" expanded="true" signature="6460:6503" ph="SELECT COUNT... SEARCHTERMCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6767:6796" ph="SELECT * FRO... RESULTSCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6767:6803" ph="SELECT SID F... RESULTSCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6777:6796" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="6904:6946" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="9928:9975" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="10218:10294" ph="SELECT (SID,... RESULTCACHE" />
+            <marker date="1524279485570" expanded="true" signature="10418:10498" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10500" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10505" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10511" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10512" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10518" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10525" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10540" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10441:10497" ph="SELECT DATE,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10945" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10951" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10956" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10958" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10964" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="11665:11768" ph="INSERT INTO ACTIVITIES... " />
+            <marker date="1524279485570" expanded="true" signature="12039:12095" ph="SELECT FBID,... ACTIVITIES" />
+            <marker date="1524279485570" expanded="true" signature="13001:13115" ph="INSERT INTO RECOMMENDATIONS... " />
+            <marker date="1524279485570" expanded="true" signature="13320:13347" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="13574:13649" ph="SELECT NAME,... " />
+            <marker date="1524279485570" expanded="true" signature="13768:13878" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="14134:14205" ph="SELECT NAME,... " />
+            <marker date="1524279485570" expanded="true" signature="14476:14514" ph="INSERT INTO USER... " />
+            <marker date="1524279485570" expanded="true" signature="14892:14947" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="15088:15144" ph="UPDATE USER " />
           </folding>
         </state>
       </provider>
@@ -569,38 +616,43 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
-            <marker date="1524264321961" expanded="true" signature="1108:1129" ph="SELECT FBID USER" />
-            <marker date="1524264321961" expanded="true" signature="1391:1470" ph="SELECT ACCES... USER" />
-            <marker date="1524264321961" expanded="true" signature="4335:4386" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="5020:5097" ph="SELECT COUNT... SEARCHTERMCACHE" />
-            <marker date="1524264321961" expanded="true" signature="5808:5867" ph="INSERT INTO CSID... " />
-            <marker date="1524264321961" expanded="true" signature="5808:5931" ph="INSERT INTO CACHE... " />
-            <marker date="1524264321961" expanded="true" signature="6287:6328" ph="SELECT COUNT... SEARCHTERMCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6586:6615" ph="SELECT * FRO... RESULTSCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6586:6622" ph="SELECT SID F... RESULTSCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6596:6615" ph="DELETE FROM " />
-            <marker date="1524264321961" expanded="true" signature="6723:6765" ph="DELETE FROM " />
-            <marker date="1524264321961" expanded="true" signature="9288:9335" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="9595:9672" ph="SELECT (SID,... RESULTCACHE" />
-            <marker date="1524264321961" expanded="true" signature="9796:9877" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9879" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9884" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9890" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9891" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9897" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9904" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9919" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9819:9876" ph="SELECT DATE,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10353" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10359" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10364" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10366" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10372" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="11058:11161" ph="INSERT INTO ACTIVITIES... " />
-            <marker date="1524264321961" expanded="true" signature="11338:11394" ph="SELECT FBID,... ACTIVITIES" />
-            <marker date="1524264321961" expanded="true" signature="12448:12486" ph="INSERT INTO USER... " />
-            <marker date="1524264321961" expanded="true" signature="12864:12919" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="13060:13116" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="1177:1198" ph="SELECT FBID USER" />
+            <marker date="1524279485570" expanded="true" signature="1460:1539" ph="SELECT ACCES... USER" />
+            <marker date="1524279485570" expanded="true" signature="4404:4455" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="5068:5144" ph="SELECT COUNT... SEARCHTERMCACHE" />
+            <marker date="1524279485570" expanded="true" signature="5929:5987" ph="INSERT INTO CSID... " />
+            <marker date="1524279485570" expanded="true" signature="5929:6051" ph="INSERT INTO CACHE... " />
+            <marker date="1524279485570" expanded="true" signature="6460:6503" ph="SELECT COUNT... SEARCHTERMCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6767:6796" ph="SELECT * FRO... RESULTSCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6767:6803" ph="SELECT SID F... RESULTSCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6777:6796" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="6904:6946" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="9928:9975" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="10218:10294" ph="SELECT (SID,... RESULTCACHE" />
+            <marker date="1524279485570" expanded="true" signature="10418:10498" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10500" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10505" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10511" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10512" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10518" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10525" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10540" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10441:10497" ph="SELECT DATE,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10945" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10951" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10956" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10958" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10964" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="11665:11768" ph="INSERT INTO ACTIVITIES... " />
+            <marker date="1524279485570" expanded="true" signature="12039:12095" ph="SELECT FBID,... ACTIVITIES" />
+            <marker date="1524279485570" expanded="true" signature="13001:13115" ph="INSERT INTO RECOMMENDATIONS... " />
+            <marker date="1524279485570" expanded="true" signature="13320:13347" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="13574:13649" ph="SELECT NAME,... " />
+            <marker date="1524279485570" expanded="true" signature="13768:13878" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="14134:14205" ph="SELECT NAME,... " />
+            <marker date="1524279485570" expanded="true" signature="14476:14514" ph="INSERT INTO USER... " />
+            <marker date="1524279485570" expanded="true" signature="14892:14947" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="15088:15144" ph="UPDATE USER " />
           </folding>
         </state>
       </provider>
@@ -641,38 +693,43 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
-            <marker date="1524264321961" expanded="true" signature="1108:1129" ph="SELECT FBID USER" />
-            <marker date="1524264321961" expanded="true" signature="1391:1470" ph="SELECT ACCES... USER" />
-            <marker date="1524264321961" expanded="true" signature="4335:4386" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="5020:5097" ph="SELECT COUNT... SEARCHTERMCACHE" />
-            <marker date="1524264321961" expanded="true" signature="5808:5867" ph="INSERT INTO CSID... " />
-            <marker date="1524264321961" expanded="true" signature="5808:5931" ph="INSERT INTO CACHE... " />
-            <marker date="1524264321961" expanded="true" signature="6287:6328" ph="SELECT COUNT... SEARCHTERMCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6586:6615" ph="SELECT * FRO... RESULTSCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6586:6622" ph="SELECT SID F... RESULTSCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6596:6615" ph="DELETE FROM " />
-            <marker date="1524264321961" expanded="true" signature="6723:6765" ph="DELETE FROM " />
-            <marker date="1524264321961" expanded="true" signature="9288:9335" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="9595:9672" ph="SELECT (SID,... RESULTCACHE" />
-            <marker date="1524264321961" expanded="true" signature="9796:9877" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9879" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9884" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9890" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9891" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9897" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9904" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9919" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9819:9876" ph="SELECT DATE,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10353" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10359" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10364" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10366" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10372" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="11058:11161" ph="INSERT INTO ACTIVITIES... " />
-            <marker date="1524264321961" expanded="true" signature="11338:11394" ph="SELECT FBID,... ACTIVITIES" />
-            <marker date="1524264321961" expanded="true" signature="12448:12486" ph="INSERT INTO USER... " />
-            <marker date="1524264321961" expanded="true" signature="12864:12919" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="13060:13116" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="1177:1198" ph="SELECT FBID USER" />
+            <marker date="1524279485570" expanded="true" signature="1460:1539" ph="SELECT ACCES... USER" />
+            <marker date="1524279485570" expanded="true" signature="4404:4455" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="5068:5144" ph="SELECT COUNT... SEARCHTERMCACHE" />
+            <marker date="1524279485570" expanded="true" signature="5929:5987" ph="INSERT INTO CSID... " />
+            <marker date="1524279485570" expanded="true" signature="5929:6051" ph="INSERT INTO CACHE... " />
+            <marker date="1524279485570" expanded="true" signature="6460:6503" ph="SELECT COUNT... SEARCHTERMCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6767:6796" ph="SELECT * FRO... RESULTSCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6767:6803" ph="SELECT SID F... RESULTSCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6777:6796" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="6904:6946" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="9928:9975" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="10218:10294" ph="SELECT (SID,... RESULTCACHE" />
+            <marker date="1524279485570" expanded="true" signature="10418:10498" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10500" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10505" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10511" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10512" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10518" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10525" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10540" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10441:10497" ph="SELECT DATE,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10945" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10951" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10956" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10958" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10964" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="11665:11768" ph="INSERT INTO ACTIVITIES... " />
+            <marker date="1524279485570" expanded="true" signature="12039:12095" ph="SELECT FBID,... ACTIVITIES" />
+            <marker date="1524279485570" expanded="true" signature="13001:13115" ph="INSERT INTO RECOMMENDATIONS... " />
+            <marker date="1524279485570" expanded="true" signature="13320:13347" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="13574:13649" ph="SELECT NAME,... " />
+            <marker date="1524279485570" expanded="true" signature="13768:13878" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="14134:14205" ph="SELECT NAME,... " />
+            <marker date="1524279485570" expanded="true" signature="14476:14514" ph="INSERT INTO USER... " />
+            <marker date="1524279485570" expanded="true" signature="14892:14947" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="15088:15144" ph="UPDATE USER " />
           </folding>
         </state>
       </provider>
@@ -740,92 +797,105 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/searchEvents.html">
+    <entry file="file://$PROJECT_DIR$/templates/homepage.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="301">
-          <caret line="62" column="27" lean-forward="false" selection-start-line="62" selection-start-column="27" selection-end-line="62" selection-end-column="27" />
+        <state relative-caret-position="224">
+          <caret line="34" column="39" lean-forward="true" selection-start-line="34" selection-start-column="39" selection-end-line="34" selection-end-column="39" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/profile.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="284">
-          <caret line="55" column="22" lean-forward="true" selection-start-line="55" selection-start-column="22" selection-end-line="55" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/homepage.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="30" column="10" lean-forward="false" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="10" />
+        <state relative-caret-position="335">
+          <caret line="51" column="59" lean-forward="false" selection-start-line="51" selection-start-column="59" selection-end-line="51" selection-end-column="59" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/static/Webapp.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="789">
-          <caret line="190" column="16" lean-forward="false" selection-start-line="190" selection-start-column="16" selection-end-line="190" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/schema.sql">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="36" column="2" lean-forward="false" selection-start-line="36" selection-start-column="2" selection-end-line="36" selection-end-column="2" />
+        <state relative-caret-position="284">
+          <caret line="187" column="11" lean-forward="true" selection-start-line="187" selection-start-column="11" selection-end-line="187" selection-end-column="11" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/savedEvents.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="26" column="15" lean-forward="false" selection-start-line="26" selection-start-column="15" selection-end-line="26" selection-end-column="15" />
+        <state relative-caret-position="124">
+          <caret line="22" column="14" lean-forward="true" selection-start-line="22" selection-start-column="14" selection-end-line="22" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/searchEvents2.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="473">
+          <caret line="56" column="70" lean-forward="false" selection-start-line="56" selection-start-column="70" selection-end-line="56" selection-end-column="70" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/schema.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="41" column="20" lean-forward="true" selection-start-line="41" selection-start-column="20" selection-end-line="41" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/searchEvents.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="205">
+          <caret line="48" column="40" lean-forward="true" selection-start-line="48" selection-start-column="40" selection-end-line="48" selection-end-column="40" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/WebApp.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="287">
-          <caret line="305" column="221" lean-forward="false" selection-start-line="305" selection-start-column="221" selection-end-line="305" selection-end-column="221" />
+        <state relative-caret-position="2370">
+          <caret line="158" column="0" lean-forward="true" selection-start-line="158" selection-start-column="0" selection-end-line="158" selection-end-column="0" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
-            <marker date="1524264321961" expanded="true" signature="1108:1129" ph="SELECT FBID USER" />
-            <marker date="1524264321961" expanded="true" signature="1391:1470" ph="SELECT ACCES... USER" />
-            <marker date="1524264321961" expanded="true" signature="4335:4386" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="5020:5097" ph="SELECT COUNT... SEARCHTERMCACHE" />
-            <marker date="1524264321961" expanded="true" signature="5808:5867" ph="INSERT INTO CSID... " />
-            <marker date="1524264321961" expanded="true" signature="5808:5931" ph="INSERT INTO CACHE... " />
-            <marker date="1524264321961" expanded="true" signature="6287:6328" ph="SELECT COUNT... SEARCHTERMCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6586:6615" ph="SELECT * FRO... RESULTSCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6586:6622" ph="SELECT SID F... RESULTSCACHE" />
-            <marker date="1524264321961" expanded="true" signature="6596:6615" ph="DELETE FROM " />
-            <marker date="1524264321961" expanded="true" signature="6723:6765" ph="DELETE FROM " />
-            <marker date="1524264321961" expanded="true" signature="9288:9335" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="9595:9672" ph="SELECT (SID,... RESULTCACHE" />
-            <marker date="1524264321961" expanded="true" signature="9796:9877" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9879" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9884" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9890" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9891" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9897" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9904" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9796:9919" ph="INSERT INTO SAVEDEVENTS... " />
-            <marker date="1524264321961" expanded="true" signature="9819:9876" ph="SELECT DATE,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10353" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10359" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10364" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10366" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="10289:10372" ph="SELECT FBID,... " />
-            <marker date="1524264321961" expanded="true" signature="11058:11161" ph="INSERT INTO ACTIVITIES... " />
-            <marker date="1524264321961" expanded="true" signature="11338:11394" ph="SELECT FBID,... ACTIVITIES" />
-            <marker date="1524264321961" expanded="true" signature="12448:12486" ph="INSERT INTO USER... " />
-            <marker date="1524264321961" expanded="true" signature="12864:12919" ph="UPDATE USER " />
-            <marker date="1524264321961" expanded="true" signature="13060:13116" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="1177:1198" ph="SELECT FBID USER" />
+            <marker date="1524279485570" expanded="true" signature="1460:1539" ph="SELECT ACCES... USER" />
+            <marker date="1524279485570" expanded="true" signature="4404:4455" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="5068:5144" ph="SELECT COUNT... SEARCHTERMCACHE" />
+            <marker date="1524279485570" expanded="true" signature="5929:5987" ph="INSERT INTO CSID... " />
+            <marker date="1524279485570" expanded="true" signature="5929:6051" ph="INSERT INTO CACHE... " />
+            <marker date="1524279485570" expanded="true" signature="6460:6503" ph="SELECT COUNT... SEARCHTERMCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6767:6796" ph="SELECT * FRO... RESULTSCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6767:6803" ph="SELECT SID F... RESULTSCACHE" />
+            <marker date="1524279485570" expanded="true" signature="6777:6796" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="6904:6946" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="9928:9975" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="10218:10294" ph="SELECT (SID,... RESULTCACHE" />
+            <marker date="1524279485570" expanded="true" signature="10418:10498" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10500" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10505" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10511" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10512" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10518" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10525" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10418:10540" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="10441:10497" ph="SELECT DATE,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10945" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10951" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10956" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10958" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="10893:10964" ph="SELECT FBID,... " />
+            <marker date="1524279485570" expanded="true" signature="11665:11768" ph="INSERT INTO ACTIVITIES... " />
+            <marker date="1524279485570" expanded="true" signature="12039:12095" ph="SELECT FBID,... ACTIVITIES" />
+            <marker date="1524279485570" expanded="true" signature="13001:13115" ph="INSERT INTO RECOMMENDATIONS... " />
+            <marker date="1524279485570" expanded="true" signature="13320:13347" ph="DELETE FROM " />
+            <marker date="1524279485570" expanded="true" signature="13574:13649" ph="SELECT NAME,... " />
+            <marker date="1524279485570" expanded="true" signature="13768:13878" ph="INSERT INTO SAVEDEVENTS... " />
+            <marker date="1524279485570" expanded="true" signature="14134:14205" ph="SELECT NAME,... " />
+            <marker date="1524279485570" expanded="true" signature="14476:14514" ph="INSERT INTO USER... " />
+            <marker date="1524279485570" expanded="true" signature="14892:14947" ph="UPDATE USER " />
+            <marker date="1524279485570" expanded="true" signature="15088:15144" ph="UPDATE USER " />
           </folding>
         </state>
       </provider>

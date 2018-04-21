@@ -14,7 +14,7 @@ app.secret_key = 'still a secret'
 
 # These will need to be changed according to your credentials, app will not run without a database
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '' #--------------CHANGE----------------
+app.config['MYSQL_DATABASE_PASSWORD'] = 'giggaman123' #--------------CHANGE----------------
 app.config['MYSQL_DATABASE_DB'] = 'fitbit'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
@@ -22,11 +22,11 @@ mysql.init_app(app)
 
 #Fitbit api information
 redirect_uri = "http://127.0.0.1:5000/callback"
-client_id = "" # ---------------CHANGE-----------------
-client_secret = "" # ---------------CHANGE-----------------
+client_id = "22CMVP" # ---------------CHANGE-----------------
+client_secret = "e1839ff5942592bc9192f780efb83cdf" # ---------------CHANGE-----------------
 
 #EventBrite api information
-eventbrite_token = '' # ---------------CHANGE-----------------
+eventbrite_token = 'MHPPXZ3TBMC6E47PBCYK' # ---------------CHANGE-----------------
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
@@ -121,7 +121,7 @@ def register():
         location=request.form.get('location') #or users could enter their location on search page, leaving it here as an example
         cursor = conn.cursor()
         cursor.execute("UPDATE USER SET LOCATION = '{0}' WHERE FBID = '{1}'".format(location,flask_login.current_user.id))
-        conn.commit()
+
         return redirect(flask.url_for('protected'))
 
 
@@ -141,32 +141,31 @@ def searchEventsRoute():
     cursor = conn.cursor()
     #check results cache for term given.
     searchterm = flask.request.form['search_term']
-    cursor.execute("SELECT NAME, DATE, VENUE, DISC, LINK, RNUM FROM RESULTCACHE WHERE SID = '{0}'".format(searchterm))
+    cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK, RNUM FROM RESULTCACHE WHERE SID = '{0}'".format(searchterm))
     result = cursor.fetchall()
     if(result):
         #results found, return them.
-        return render_template('searchEvents.html', results = result)
+        print("CACHE PULL")
+        return render_template('searchEvents2.html', results = result, name= flask_login.current_user.name, message="Here Are Your Search Results!")
 
     else:
         #get first instance of search results.
         results = searchEvents(flask.request.form['search_term'], flask_login.current_user.location)
-        searchterm = flask.request.form['search_term']
         results = [{"name":results[i][0], "date":reformatDate(results[i][1]), "venue":results[i][2], "desc":results[i][3], "link":results[i][4], "activity":results[i][5], "resNum": i} for i in range(len(results))]
-
         #insert search results into the cache.
+        print(results)
         for result in results:
-            cursor.execute("INSERT INTO RESULTCACHE (SID, NAME, DATE, VENUE, DISC, LINK, RNUM) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(searchterm, result["name"], result["date"], result["venue"], result["desc"], result["link"], result["resNum"]));
+            cursor.execute("INSERT INTO RESULTCACHE (SID, NAME, DATE, VENUE, DES, LINK, RNUM) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(searchterm, result["name"], result["date"], result["venue"], result["desc"], result["link"], result["resNum"]))
 
-        cursor.commit()
         #delete old results
         deleteOldResults()
-        return render_template('searchEvents.html', results= results)
+        return render_template('searchEvents.html', results= results, name= flask_login.current_user.name, message="Here Are Your Search Results!")
 
 #helper function
 def searchcount():
     cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(UNIQUE SID) FROM RESULTCACHE")
-    count = cursor.fetchall()
+    cursor.execute("SELECT COUNT(DISTINCT SID) FROM RESULTCACHE")
+    count = cursor.fetchall()[0][0]
     return count
 
 #deletes old results from results cache
@@ -180,7 +179,6 @@ def deleteOldResults():
 
         #remove all results matching sid
         cursor.execute("DELETE FROM RESULTSCACHE WHERE SID = '{0}'".format(sid))
-        cursor.commit()
 
 
 def searchEvents(search_term, location):
@@ -194,14 +192,27 @@ def searchEvents(search_term, location):
         jData = json.loads(myResponse.text)
         events = jData['events']
         for event in events:
+            #format the strings for the database
             name = event['name']['text']
+            name = list(name)
+            for j in range(len(name)):
+                if(name[j] == "'"):
+                    name[j] = "''"
+            name = "".join(name)
             date = event['start']['local']
             venue = event['venue']['address']['address_1']
             if venue == None:
                 venue = "Venue in description."
             desc = event['description']['text']
+            # format the strings for the database
             if desc == None:
                 desc = "No description provided."
+            else:
+                desc = list(desc)
+                for i in range(len(desc)):
+                    if(desc[i] == "'"):
+                        desc[i] = "''"
+                desc = "".join(desc)
             eventbrite_link = event['url']
             activity = search_term #the fitbit activity that this event is matched with
 
@@ -242,7 +253,7 @@ def getUserName(fbid, access_token):
     user_name = response['user']['displayName']
     cursor = conn.cursor()
     cursor.execute("UPDATE USER SET NAME = '{0}' WHERE FBID = '{1}'".format(user_name, fbid))
-    conn.commit()
+
     return user_name
 
 #save user events
@@ -251,12 +262,12 @@ def getUserName(fbid, access_token):
 def saveEvent():
     cursor = conn.cursor()
     resnum = flask.request.form["name"]
-    cursor.execute("SELECT SID, NAME, DATE, VENUE, DISC, LINK FROM RESULTCACHE WHERE RNUM = '{0}'".format(resnum))
+    cursor.execute("SELECT SID, NAME, DATE, VENUE, DES, LINK FROM RESULTCACHE WHERE RNUM = '{0}'".format(resnum))
     event = cursor.fetchall()
     print(event)
     fbid = flask_login.current_user.id
-    cursor.execute("INSERT INTO SAVEDEVENTS (FBID, SID, NAME, DATE, VENUE, DESC, LINK) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(fbid, event[0], event[1], event[2], event[3], event[4], event[5]))
-    conn.commit()
+    cursor.execute("INSERT INTO SAVEDEVENTS (FBID, SID, NAME, DATE, VENUE, DES, LINK) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(fbid, event[0], event[1], event[2], event[3], event[4], event[5]))
+
     return render_template('savedEvents.html', events=getSavedEvents())
 
 #get user saved events
@@ -265,9 +276,10 @@ def saveEvent():
 def getSavedEvents():
     fbid = flask_login.current_user.id
     cursor = conn.cursor()
-    cursor.execute("SELECT FBID, SID, NAME, DATE, VENUE, DESC, LINK FROM SAVEDEVENTS WHERE FBID = '{0}'".format(fbid))
-    events = cursor.fetchall()
-    return render_template('savedEvents.html', events= events)
+    cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK FROM SAVEDEVENTS WHERE FBID = '{0}'".format(fbid))
+    event = cursor.fetchall()
+    print(event)
+    return render_template('savedEvents.html', events= event)
 
 #get fitbit activities
 def getActivities():
@@ -287,6 +299,10 @@ def getActivities():
     return activities
 
 def recommendEvents():
+    #clear the current table.
+    emptyRecommendations()
+
+    #fill the table with new events
     cursor = conn.cursor()
     cursor.execute("SELECT FBID, ACTIVITY FROM ACTIVITIES WHERE FBID = '{0}'".format(flask_login.current_user.id))
     activities = cursor.fetchall()
@@ -304,8 +320,38 @@ def recommendEvents():
 
     #Put date in readable format
     sorted_events = [{"name":sorted_events[i][0], "date":reformatDate(sorted_events[i][1]), "venue":sorted_events[i][2], "desc":sorted_events[i][3], "link":sorted_events[i][4], "activity":sorted_events[i][5], "resNum": i} for i in range(len(sorted_events))]
+    #insert events into table
+    for event in sorted_events:
+        cursor.execute("INSERT INTO RECOMMENDATIONS (NAME, DATE, VENUE, DES, LINK, RNUM) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(event["name"], event["date"], event["venue"], event["desc"], event["link"], event["resNum"]))
 
     return sorted_events
+
+def emptyRecommendations():
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM RECOMMENDATIONS")
+
+#save user events
+@app.route('/saveEventRecommendations', methods=["POST"])
+@flask_login.login_required
+def saveEventRecommendations():
+    cursor = conn.cursor()
+    resnum = flask.request.form["name"]
+    cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK FROM RECOMMENDATIONS WHERE RNUM = '{0}'".format(resnum))
+    event = cursor.fetchall()[0]
+    fbid = flask_login.current_user.id
+    cursor.execute(
+        "INSERT INTO SAVEDEVENTS (FBID, NAME, DATE, VENUE, DES, LINK) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(
+            fbid, event[0], event[1], event[2], event[3], event[4]))
+
+    return render_template('savedEvents.html', events=getRecSaved())
+
+
+def getRecSaved():
+    fbid = flask_login.current_user.id
+    cursor = conn.cursor()
+    cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK FROM SAVEDEVENTS WHERE FBID = '{0}'".format(fbid))
+    event = cursor.fetchall()
+    return event
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
