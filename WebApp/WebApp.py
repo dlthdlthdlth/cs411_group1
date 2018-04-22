@@ -14,19 +14,19 @@ app.secret_key = 'still a secret'
 
 # These will need to be changed according to your credentials, app will not run without a database
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '' #--------------CHANGE----------------
-app.config['MYSQL_DATABASE_DB'] = ''
+app.config['MYSQL_DATABASE_PASSWORD'] = 'giggaman123' #--------------CHANGE----------------
+app.config['MYSQL_DATABASE_DB'] = 'fitbit'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
 
 #Fitbit api information
 redirect_uri = "http://127.0.0.1:5000/callback"
-client_id = "" # ---------------CHANGE-----------------
-client_secret = "" # ---------------CHANGE-----------------
+client_id = "22CMVP" # ---------------CHANGE-----------------
+client_secret = "e1839ff5942592bc9192f780efb83cdf" # ---------------CHANGE-----------------
 
 #EventBrite api information
-eventbrite_token = '' # ---------------CHANGE-----------------
+eventbrite_token = 'MHPPXZ3TBMC6E47PBCYK' # ---------------CHANGE-----------------
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
@@ -124,14 +124,12 @@ def register():
 
         return redirect(flask.url_for('protected'))
 
-
+#user profile route
 @app.route('/profile')
 @flask_login.login_required
 def protected():
-
     activities = getActivities()
     events = recommendEvents()
-
     return render_template('profile.html', name=flask_login.current_user.name, activities = activities, events = events)
 
 #search events
@@ -145,7 +143,7 @@ def searchEventsRoute():
     result = cursor.fetchall()
     if(result):
         #results found, return them.
-        print("CACHE PULL")
+        #print("CACHE PULL")
         return render_template('searchEvents2.html', results = result, name= flask_login.current_user.name, message="Here Are Your Search Results!")
 
     else:
@@ -153,10 +151,10 @@ def searchEventsRoute():
         results = searchEvents(flask.request.form['search_term'], flask_login.current_user.location)
         results = [{"name":results[i][0], "date":reformatDate(results[i][1]), "venue":results[i][2], "desc":results[i][3], "link":results[i][4], "activity":results[i][5], "resNum": i} for i in range(len(results))]
         #insert search results into the cache.
-        print(results)
+        #print("api call")
         for result in results:
             cursor.execute("INSERT INTO RESULTCACHE (SID, NAME, DATE, VENUE, DES, LINK, RNUM) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(searchterm, result["name"], result["date"], result["venue"], result["desc"], result["link"], result["resNum"]))
-
+        conn.commit()
         #delete old results
         deleteOldResults()
         return render_template('searchEvents.html', results= results, name= flask_login.current_user.name, message="Here Are Your Search Results!")
@@ -168,19 +166,19 @@ def searchcount():
     count = cursor.fetchall()[0][0]
     return count
 
-#deletes old results from results cache
+#deletes old results from results cache if more than 5 searches have occured.
 def deleteOldResults():
     count = searchcount()
     if(count > 5):
         #get SID of first record in cache.
         cursor = conn.cursor()
-        cursor.execute("SELECT SID FROM RESULTSCACHE LIMIT 1")
-        sid = cursor.fetchall()
-
+        cursor.execute("SELECT SID FROM RESULTCACHE ORDER BY ID LIMIT 1")
+        sid = cursor.fetchall()[0][0]
         #remove all results matching sid
-        cursor.execute("DELETE FROM RESULTSCACHE WHERE SID = '{0}'".format(sid))
+        cursor.execute("DELETE FROM RESULTCACHE WHERE SID = '{0}'".format(sid))
+        conn.commit()
 
-
+#search events api call
 def searchEvents(search_term, location):
     url = "https://www.eventbriteapi.com/v3/events/search/"
     head = {'Authorization': 'Bearer {}'.format(eventbrite_token)}
@@ -199,12 +197,14 @@ def searchEvents(search_term, location):
                 if(name[j] == "'"):
                     name[j] = "''"
             name = "".join(name)
+
             date = event['start']['local']
+
             venue = event['venue']['address']['address_1']
             if venue == None:
                 venue = "Venue in description."
+
             desc = event['description']['text']
-            # format the strings for the database
             if desc == None:
                 desc = "No description provided."
             else:
@@ -213,6 +213,7 @@ def searchEvents(search_term, location):
                     if(desc[i] == "'"):
                         desc[i] = "''"
                 desc = "".join(desc)
+
             eventbrite_link = event['url']
             activity = search_term #the fitbit activity that this event is matched with
 
@@ -263,12 +264,31 @@ def saveEvent():
     cursor = conn.cursor()
     resnum = flask.request.form["name"]
     cursor.execute("SELECT SID, NAME, DATE, VENUE, DES, LINK FROM RESULTCACHE WHERE RNUM = '{0}'".format(resnum))
-    event = cursor.fetchall()
-    print(event)
-    fbid = flask_login.current_user.id
-    cursor.execute("INSERT INTO SAVEDEVENTS (FBID, SID, NAME, DATE, VENUE, DES, LINK) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(fbid, event[0], event[1], event[2], event[3], event[4], event[5]))
+    event = cursor.fetchall()[0]
+    #check if saved event already exists
+    cursor.execute("SELECT LINK FROM SAVEDEVENTS WHERE LINK = '{0}'".format(event[5]))
+    if (cursor.fetchall()):
+        return render_template('savedEvents.html', message="Event already saved", events=getSearchSaved(),
+                               name=flask_login.current_user.name)
+    # reformat strings to avoid database errors.
+    else:
+        tempN = event[1]
+        tempN = list(tempN)
+        for i in range(len(tempN)):
+            if (tempN[i] == "'"):
+                tempN[i] = "''"
+        tempN = "".join(tempN)
 
-    return render_template('savedEvents.html', events=getSavedEvents())
+        tempD = event[4]
+        tempD = list(tempD)
+        for i in range(len(tempD)):
+            if (tempD[i] == "'"):
+                tempD[i] = "''"
+        tempD = "".join(tempD)
+        fbid = flask_login.current_user.id
+        cursor.execute("INSERT INTO SAVEDEVENTS (FBID, SID, NAME, DATE, VENUE, DES, LINK) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(fbid, event[0], tempN, event[2], event[3], tempD, event[5]))
+        conn.commit()
+        return render_template('savedEvents.html', events=getSearchSaved())
 
 #get user saved events
 @app.route('/savedEvents', methods=["GET"])
@@ -278,8 +298,16 @@ def getSavedEvents():
     cursor = conn.cursor()
     cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK FROM SAVEDEVENTS WHERE FBID = '{0}'".format(fbid))
     event = cursor.fetchall()
-    print(event)
     return render_template('savedEvents.html', events= event)
+
+#helper function for search events saved
+@flask_login.login_required
+def getSearchSaved():
+    fbid = flask_login.current_user.id
+    cursor = conn.cursor()
+    cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK FROM SAVEDEVENTS WHERE FBID = '{0}'".format(fbid))
+    event = cursor.fetchall()
+    return event
 
 #get fitbit activities
 def getActivities():
@@ -323,12 +351,13 @@ def recommendEvents():
     #insert events into table
     for event in sorted_events:
         cursor.execute("INSERT INTO RECOMMENDATIONS (NAME, DATE, VENUE, DES, LINK, RNUM) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(event["name"], event["date"], event["venue"], event["desc"], event["link"], event["resNum"]))
-
+    conn.commit()
     return sorted_events
 
 def emptyRecommendations():
     cursor = conn.cursor()
     cursor.execute("DELETE FROM RECOMMENDATIONS")
+    conn.commit()
 
 #save user events
 @app.route('/saveEventRecommendations', methods=["POST"])
@@ -338,14 +367,35 @@ def saveEventRecommendations():
     resnum = flask.request.form["name"]
     cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK FROM RECOMMENDATIONS WHERE RNUM = '{0}'".format(resnum))
     event = cursor.fetchall()[0]
-    fbid = flask_login.current_user.id
-    cursor.execute(
-        "INSERT INTO SAVEDEVENTS (FBID, NAME, DATE, VENUE, DES, LINK) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(
-            fbid, event[0], event[1], event[2], event[3], event[4]))
+    #check if saved event is already in table
+    cursor.execute("SELECT LINK FROM SAVEDEVENTS WHERE LINK = '{0}'".format(event[4]))
+    if(cursor.fetchall()):
+        return render_template('profile.html', message= "Event already saved", events=recommendEvents(), name= flask_login.current_user.name, activities = getActivities())
+    #reformat strings to avoid database errors.
+    else:
+        tempN = event[0]
+        tempN = list(tempN)
+        for i in range(len(tempN)):
+            if (tempN[i] == "'"):
+                tempN[i] = "''"
+        tempN = "".join(tempN)
 
-    return render_template('savedEvents.html', events=getRecSaved())
+        tempD = event[3]
+        tempD = list(tempD)
+        for i in range(len(tempD)):
+            if (tempD[i] == "'"):
+                tempD[i] = "''"
+        tempD = "".join(tempD)
 
+        fbid = flask_login.current_user.id
+        cursor.execute(
+            "INSERT INTO SAVEDEVENTS (FBID, NAME, DATE, VENUE, DES, LINK) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(
+                fbid, tempN, event[1], event[2], tempD, event[4]))
+        conn.commit()
+        return render_template('savedEvents.html', events=getRecSaved())
 
+#helper function for recommendations saved
+@flask_login.login_required
 def getRecSaved():
     fbid = flask_login.current_user.id
     cursor = conn.cursor()
