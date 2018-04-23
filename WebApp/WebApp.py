@@ -116,7 +116,7 @@ def callback():
 @flask_login.login_required
 def register():
     if flask.request.method == 'GET':
-        return render_template('register.html')
+        return render_template('register.html', name = flask_login.current_user.name)
     else:
         location=request.form.get('location') #or users could enter their location on search page, leaving it here as an example
         cursor = conn.cursor()
@@ -243,7 +243,10 @@ def hello():
 
 @app.route("/searchPage", methods=['GET'])
 def searchPage():
-    return render_template('homepage.html', name= flask_login.current_user.name)
+    if flask_login.current_user.is_authenticated:
+        return render_template('homepage.html', name= flask_login.current_user.name)
+    else:
+        return render_template('homepage.html')
 
 @app.route('/logout')
 def logout():
@@ -304,6 +307,7 @@ def getSavedEvents():
     cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK FROM SAVEDEVENTS WHERE FBID = '{0}'".format(fbid))
     events = cursor.fetchall()
     events = [{"name": str(events[i][0]), "date": str(events[i][1]), "venue": str(events[i][2]), "desc": str(events[i][3]), "link": str(events[i][4]), "resNum": i } for i in range(len(events))]
+    print (events)
     return render_template('savedEvents.html', events= events)
 
 #helper function for search events saved
@@ -432,8 +436,9 @@ def getRecSaved():
     fbid = flask_login.current_user.id
     cursor = conn.cursor()
     cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK FROM SAVEDEVENTS WHERE FBID = '{0}'".format(fbid))
-    event = cursor.fetchall()
-    return event
+    events = cursor.fetchall()
+    events = [{"name": str(events[i][0]), "date": str(events[i][1]), "venue": str(events[i][2]), "desc": str(events[i][3]), "link": str(events[i][4]), "resNum": i } for i in range(len(events))]
+    return events
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():

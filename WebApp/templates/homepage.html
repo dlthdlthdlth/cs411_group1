@@ -10,7 +10,7 @@
   {% extends "layout.html" %}
   {% block content %}
     <section class="header">
-            <h1>FitBit Event Finder</h1>
+            <h2>FitBit Event Finder</h2>
     </section>
     <section class="message">
         <br />
@@ -25,7 +25,7 @@
         {% endif %}
     </section>
     <br />
-    <section class="searchbar">
+    <div class="searchbar">
         <br/>
             <form action='/searchEvents' method='POST'>
                 <label for="search_term">Search For Events!</label>
@@ -38,7 +38,7 @@
 				<input type='submit' name='submit' class="btn btn-alt"></input>
             </form>
         <br/>
-    </section>
+    </div>
     {% endblock%}
 </body>
 </html>

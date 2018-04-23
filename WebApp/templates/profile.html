@@ -10,13 +10,9 @@
   {% extends "layout.html" %}
   {% block content %}
     <section class="header">
-            <h1>My Profile</h1>
+            <h2>{{name}}'s Profile</h2>
     </section>
     <section class="message">
-        {% if name %}
-            <h1> {{ name }}</h1>
-        {% endif %}
-        <br />
         {% if message %}
             <h1> {{ message }}</h1>
         {% endif %}
@@ -25,7 +21,7 @@
     <br />
     <section class="activities">
         {% if activities %}
-            <h1>My FitBit Activities</h1>
+            <h1>Your FitBit Activities:</h1>
             <ul>
                 {% for activity in activities %}
                 <li>{{ activity }}</li>
@@ -36,8 +32,7 @@
     <br/>
     <section class="events">
         {% if events %}
-            <h1>Your Recommended events:</h1>
-            <br>
+            <h1>Your Recommended Events:</h1>
             {% block eventList %}
             <!--  super() displays what is in this block in layout.html-->
               {{ super() }}
