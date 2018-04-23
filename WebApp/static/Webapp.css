@@ -24,8 +24,8 @@ footer, header, hgroup, menu, nav, section {
   display: block;
 }
 body {
-  color: white;
-  font: 300 16px/22px "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #648880;
+  font: 300 20px/22px "Source Sans Pro", Helvetica, Arial, sans-serif;
 }
 
 ol, ul {
@@ -64,6 +64,7 @@ cite, em {
     text-transform: uppercase;
 }
 
+
 .navigation a {
     color: #648880;
     text-decoration: none;
@@ -89,7 +90,6 @@ a:hover {
 
 .header h1{
     margin-top: 10px;
-    color: #648880;
 }
 
 h2, h3, h4{
@@ -163,7 +163,9 @@ form {
     border: 1px solid #dfe2e5;
     padding: 10px 30px;
     color: #648880;
+    font-size: 20px;
     background: white;
+    margin-top: 10px;
 }
 
 
@@ -179,14 +181,12 @@ form {
 
 .event-name{
     font-weight: bold;
-    color: #648880;
     font-weight: 100;
     text-align: center;
 }
 
 .events {
     text-align: center;
-    color: #648880;
     font-weight: 100;
     width: 100%;
 }
@@ -199,8 +199,19 @@ form {
     visibility: hidden;
 }
 
+li{
+  margin-right: 100px;
+  margin-left: 100px;
+}
+
+hr{
+  margin-right: 100px;
+  margin-left: 100px;
+}
+
 /*footer for all pages*/
 .footer{
+  color: white;
     height: 500px;
     background-color: #648880;
 }

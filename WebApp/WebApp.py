@@ -7,15 +7,15 @@ import flask.ext.login as flask_login
 import json
 import base64
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 mysql = MySQL()
 app = Flask(__name__)
 app.secret_key = 'still a secret'
 
 # These will need to be changed according to your credentials, app will not run without a database
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '' #--------------CHANGE----------------
-app.config['MYSQL_DATABASE_DB'] = 'fitbit'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'database_dude' #--------------CHANGE----------------
+app.config['MYSQL_DATABASE_DB'] = ''
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
@@ -129,7 +129,8 @@ def register():
 @flask_login.login_required
 def protected():
     activities = getActivities()
-    events = recommendEvents()
+    events = recommendEvents(activities)
+    insertActivities(activities)
     return render_template('profile.html', name=flask_login.current_user.name, activities = activities, events = events)
 
 #search events
@@ -215,10 +216,9 @@ def searchEvents(search_term, location):
                 desc = "".join(desc)
 
             eventbrite_link = event['url']
-            activity = search_term #the fitbit activity that this event is matched with
 
             #results.append({"name":name, "desc": desc, "time":time, "venue":venue, "activity": activity})
-            results.append((name, date, venue, desc, eventbrite_link, activity))
+            results.append((name, date, venue, desc, eventbrite_link, search_term))
     else:
         # If response code is not ok (200), print the resulting http error code with description
         myResponse.raise_for_status()
@@ -314,7 +314,6 @@ def getActivities():
     url = "https://api.fitbit.com/1/user/"+ flask_login.current_user.id +"/activities/list.json?afterDate=2005-01-01&sort=desc&limit=20&offset=0"
     headers = {'Authorization': "Bearer " + flask_login.current_user.access_token}
     response = requests.request("GET", url, headers=headers)
-    # print (response.headers)
     response = json.loads(response.text)
 
     activities = []
@@ -322,41 +321,68 @@ def getActivities():
     cursor = conn.cursor()
     for activity in response['activities']:
         activities.append(activity['activityName'])
-        cursor.execute("INSERT INTO ACTIVITIES (FBID, ACTIVITY) VALUES ('{0}', '{1}') ON DUPLICATE KEY UPDATE ACTIVITY=ACTIVITY;".format(flask_login.current_user.id, activity['activityName']))
-    conn.commit()
     return activities
 
-def recommendEvents():
+def insertActivities(activities):
+    cursor = conn.cursor()
+    for activity in activities:
+        cursor.execute("INSERT INTO ACTIVITIES (FBID, ACTIVITY) VALUES ('{0}', '{1}') ON DUPLICATE KEY UPDATE ACTIVITY=ACTIVITY;".format(flask_login.current_user.id, activity))
+    conn.commit()
+    return
+
+def recommendEvents(api_activities):
     #clear the current table.
-    emptyRecommendations()
+    # emptyRecommendations()
 
     #fill the table with new events
     cursor = conn.cursor()
-    cursor.execute("SELECT FBID, ACTIVITY FROM ACTIVITIES WHERE FBID = '{0}'".format(flask_login.current_user.id))
-    activities = cursor.fetchall()
+    cursor.execute("SELECT ACTIVITY FROM ACTIVITIES WHERE FBID = '{0}'".format(flask_login.current_user.id))
+    db_activities = cursor.fetchall()
+    db_activities = [str(db_activities[index][0]) for index in range(len(db_activities))]
+
     events = []
-    #call searchEvents() with each of the user's activities
-    for index in range(len(activities)):
-        activity = str(activities[index][1])
+
+    #if activity list hasn't changed, load recommended events from the cache
+    if  db_activities != [] and set(api_activities) == set(db_activities):
+        cursor.execute("SELECT TIME_MODIFIED FROM RECOMMENDATIONS WHERE FBID = '{0}'".format(flask_login.current_user.id))
+        time_modified = cursor.fetchall()[0][0]
+        now = datetime.now()
+        print (now)
+        print (time_modified)
+        now_minus_10 = now - timedelta(minutes = 10)
+        print (now_minus_10)
+        #if its been less than 10 minutes since the recommended events were updated, pull from cache
+        if time_modified > now_minus_10:
+            print ("pulling from cache")
+            cursor.execute("SELECT SID, NAME, DATE, VENUE, DES, LINK FROM RECOMMENDATIONS WHERE FBID = '{0}'".format(flask_login.current_user.id))
+            events = cursor.fetchall()
+            events = [{"name": str(events[i][1]), "date": str(events[i][2]), "venue": str(events[i][3]), "desc": str(events[i][4]), "link": str(events[i][5]), "search_term": str(events[i][0]), "resNum": i } for i in range(len(events))]
+            return events
+
+    #empty the cache of recommended events and call searchEvents() with each of the user's activities
+    emptyRecommendations()
+    events = []
+
+    for activity in api_activities:
         event = searchEvents(activity, flask_login.current_user.location)
         events.append(event)
 
     #flatten the 2D array into a 1D array
     events = [event for category in events for event in category]
     #sort events by date
-    sorted_events = sorted(events, key=lambda x: x[1])
+    events = sorted(events, key=lambda x: x[1])
 
     #Put date in readable format
-    sorted_events = [{"name":sorted_events[i][0], "date":reformatDate(sorted_events[i][1]), "venue":sorted_events[i][2], "desc":sorted_events[i][3], "link":sorted_events[i][4], "activity":sorted_events[i][5], "resNum": i} for i in range(len(sorted_events))]
+    events = [{"name":events[i][0], "date":reformatDate(events[i][1]), "venue":events[i][2], "desc":events[i][3], "link":events[i][4], "search_term":events[i][5], "resNum": i} for i in range(len(events))]
     #insert events into table
-    for event in sorted_events:
-        cursor.execute("INSERT INTO RECOMMENDATIONS (NAME, DATE, VENUE, DES, LINK, RNUM) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(event["name"], event["date"], event["venue"], event["desc"], event["link"], event["resNum"]))
+    for event in events:
+        cursor.execute("INSERT INTO RECOMMENDATIONS (FBID, SID, NAME, DATE, VENUE, DES, LINK, RNUM) VALUES ('{0}','{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}') ON DUPLICATE KEY UPDATE RNUM=RNUM".format( flask_login.current_user.id, event["search_term"], event["name"], event["date"], event["venue"], event["desc"], event["link"], event["resNum"]))
     conn.commit()
-    return sorted_events
+    return events
 
 def emptyRecommendations():
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM RECOMMENDATIONS")
+    cursor.execute("DELETE FROM RECOMMENDATIONS WHERE FBID = '{0}'".format(flask_login.current_user.id))
     conn.commit()
 
 #save user events
@@ -369,8 +395,9 @@ def saveEventRecommendations():
     event = cursor.fetchall()[0]
     #check if saved event is already in table
     cursor.execute("SELECT LINK FROM SAVEDEVENTS WHERE LINK = '{0}'".format(event[4]))
+    actvities = getActivities()
     if(cursor.fetchall()):
-        return render_template('profile.html', message= "Event already saved", events=recommendEvents(), name= flask_login.current_user.name, activities = getActivities())
+        return render_template('profile.html', message= "Event already saved", events=recommendEvents(activities), name= flask_login.current_user.name, activities = activities)
     #reformat strings to avoid database errors.
     else:
         tempN = event[0]
