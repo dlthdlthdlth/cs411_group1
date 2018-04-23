@@ -7,12 +7,8 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,500,700|Oswald:300,400,700" rel="stylesheet">
 </head>
 <body>
-  <nav class="navigation">
-      <a href='/'>Home</a>
-      <a href='/profile'>Profile</a>
-      <a href="/savedEvents">Saved Events</a>
-      <a href='/logout'>Logout</a>
-  </nav>
+    {% extends "layout.html" %}
+    {% block content %}
     <section class="header">
             <h1>FitBit Event Finder</h1>
     </section>
@@ -41,32 +37,15 @@
             </form></br>
     </div>
     <section class="events">
-        {%  if results %}
+        {%  if events %}
             <h1 class="title">Results</h1>
             <br/>
-            <ul>
-              {% for event in results %}
-                <li class = 'event-name'>{{ event['name'] }}</li>
-                <br>
-                <li>{{ event['date'] }}</li>
-                <li>{{ event['venue'] }}</li>
-                <br>
-                <li>{{ event['desc'] }}</li>
-                <br>
-                <li>Eventbrite link: <a href={{ event['link'] }}>{{ event['link'] }}</a></li>
-                  <form action='/saveEvent' method='POST'>
-                        <input type='hidden' name='name' id='name' value='{{ event['resNum']}}'></input>
-                        <input type='submit' value='Save Event' class="btn btn-alt"></input>
-                    </form>
-                <hr>
-              {% endfor %}
-            </ul>
+            {% block eventList %}
+            <!--  super() displays what is in this block in layout.html-->
+              {{ super() }}
+            {% endblock %}
         {% endif %}
     </section>
-    <section class="footer">
-        <div id="logo">
-            <h1>Welcome to FitBit Event Finder</h1>
-        </div>
-    </section>
+    {% endblock %}
 </body>
 </html>

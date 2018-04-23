@@ -2,17 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>home</title>
+    <title>Search</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='Webapp.css') }}">
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,500,700|Oswald:300,400,700" rel="stylesheet">
 </head>
 <body>
-  <nav class="navigation">
-      <a href='/'>Home</a>
-      <a href='/profile'>Profile</a>
-      <a href="/savedEvents">Saved Events</a>
-      <a href='/logout'>Logout</a>
-  </nav>
+  {% extends "layout.html" %}
+  {% block content %}
     <section class="header">
             <h1>FitBit Event Finder</h1>
     </section>
@@ -43,11 +39,6 @@
             </form>
         <br/>
     </section>
-    <br />
-    <section class="footer">
-        <div id="logo">
-            <h1>Welcome to FitBit Event Finder</h1>
-        </div>
-    </section>
+    {% endblock%}
 </body>
 </html>

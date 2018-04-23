@@ -14,8 +14,8 @@ app.secret_key = 'still a secret'
 
 # These will need to be changed according to your credentials, app will not run without a database
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'database_dude' #--------------CHANGE----------------
-app.config['MYSQL_DATABASE_DB'] = ''
+app.config['MYSQL_DATABASE_PASSWORD'] = '' #--------------CHANGE----------------
+app.config['MYSQL_DATABASE_DB'] = 'fitbit'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
@@ -141,24 +141,25 @@ def searchEventsRoute():
     #check results cache for term given.
     searchterm = flask.request.form['search_term']
     cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK, RNUM FROM RESULTCACHE WHERE SID = '{0}'".format(searchterm))
-    result = cursor.fetchall()
-    if(result):
+    events = cursor.fetchall()
+    events = [{"name": str(events[i][0]), "date": str(events[i][1]), "venue": str(events[i][2]), "desc": str(events[i][3]), "link": str(events[i][4]), "resNum": i } for i in range(len(events))]
+    if(events):
         #results found, return them.
-        #print("CACHE PULL")
-        return render_template('searchEvents2.html', results = result, name= flask_login.current_user.name, message="Here Are Your Search Results!")
+        print("CACHE PULL")
+        return render_template('searchEvents.html', events= events, name= flask_login.current_user.name, message="Here Are Your Search Results!")
 
     else:
         #get first instance of search results.
-        results = searchEvents(flask.request.form['search_term'], flask_login.current_user.location)
-        results = [{"name":results[i][0], "date":reformatDate(results[i][1]), "venue":results[i][2], "desc":results[i][3], "link":results[i][4], "activity":results[i][5], "resNum": i} for i in range(len(results))]
+        events = searchEvents(flask.request.form['search_term'], flask_login.current_user.location)
+        events = [{"name":events[i][0], "date":reformatDate(events[i][1]), "venue":events[i][2], "desc":events[i][3], "link":events[i][4], "activity":events[i][5], "resNum": i} for i in range(len(events))]
         #insert search results into the cache.
-        #print("api call")
-        for result in results:
-            cursor.execute("INSERT INTO RESULTCACHE (SID, NAME, DATE, VENUE, DES, LINK, RNUM) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(searchterm, result["name"], result["date"], result["venue"], result["desc"], result["link"], result["resNum"]))
+        print("api call")
+        for event in events:
+            cursor.execute("INSERT INTO RESULTCACHE (SID, NAME, DATE, VENUE, DES, LINK, RNUM) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(searchterm, event["name"], event["date"], event["venue"], event["desc"], event["link"], event["resNum"]))
         conn.commit()
         #delete old results
         deleteOldResults()
-        return render_template('searchEvents.html', results= results, name= flask_login.current_user.name, message="Here Are Your Search Results!")
+        return render_template('searchEvents.html', events= events, name= flask_login.current_user.name, message="Here Are Your Search Results!")
 
 #helper function
 def searchcount():
@@ -236,9 +237,13 @@ def reformatDate(date):
 @app.route("/", methods=['GET'])
 def hello():
     if flask_login.current_user.is_authenticated:
-        return render_template('homepage.html', name=flask_login.current_user.name)
+        return flask.redirect(flask.url_for('protected'))
     else:
         return render_template('homepage.html')
+
+@app.route("/searchPage", methods=['GET'])
+def searchPage():
+    return render_template('homepage.html', name= flask_login.current_user.name)
 
 @app.route('/logout')
 def logout():
@@ -297,17 +302,19 @@ def getSavedEvents():
     fbid = flask_login.current_user.id
     cursor = conn.cursor()
     cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK FROM SAVEDEVENTS WHERE FBID = '{0}'".format(fbid))
-    event = cursor.fetchall()
-    return render_template('savedEvents.html', events= event)
+    events = cursor.fetchall()
+    events = [{"name": str(events[i][0]), "date": str(events[i][1]), "venue": str(events[i][2]), "desc": str(events[i][3]), "link": str(events[i][4]), "resNum": i } for i in range(len(events))]
+    return render_template('savedEvents.html', events= events)
 
 #helper function for search events saved
 @flask_login.login_required
 def getSearchSaved():
     fbid = flask_login.current_user.id
     cursor = conn.cursor()
-    cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK FROM SAVEDEVENTS WHERE FBID = '{0}'".format(fbid))
-    event = cursor.fetchall()
-    return event
+    cursor.execute("SELECT  NAME, DATE, VENUE, DES, LINK FROM SAVEDEVENTS WHERE FBID = '{0}'".format(fbid))
+    events = cursor.fetchall()
+    events = [{"name": str(events[i][0]), "date": str(events[i][1]), "venue": str(events[i][2]), "desc": str(events[i][3]), "link": str(events[i][4]), "resNum": i } for i in range(len(events))]
+    return events
 
 #get fitbit activities
 def getActivities():
@@ -347,10 +354,8 @@ def recommendEvents(api_activities):
         cursor.execute("SELECT TIME_MODIFIED FROM RECOMMENDATIONS WHERE FBID = '{0}'".format(flask_login.current_user.id))
         time_modified = cursor.fetchall()[0][0]
         now = datetime.now()
-        print (now)
         print (time_modified)
         now_minus_10 = now - timedelta(minutes = 10)
-        print (now_minus_10)
         #if its been less than 10 minutes since the recommended events were updated, pull from cache
         if time_modified > now_minus_10:
             print ("pulling from cache")
@@ -395,7 +400,7 @@ def saveEventRecommendations():
     event = cursor.fetchall()[0]
     #check if saved event is already in table
     cursor.execute("SELECT LINK FROM SAVEDEVENTS WHERE LINK = '{0}'".format(event[4]))
-    actvities = getActivities()
+    activities = getActivities()
     if(cursor.fetchall()):
         return render_template('profile.html', message= "Event already saved", events=recommendEvents(activities), name= flask_login.current_user.name, activities = activities)
     #reformat strings to avoid database errors.
@@ -490,7 +495,6 @@ def refreshToken(fbid, access_token, refresh_token):
 
     response = requests.request("POST", url, headers=headers, params=querystring)
     response = json.loads(response.text)
-    print(response)
     access_token = response['access_token']
     refresh_token = response['refresh_token']
 

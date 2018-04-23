@@ -7,12 +7,9 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,500,700|Oswald:300,400,700" rel="stylesheet">
 </head>
 <body>
-    <nav class="navigation">
-        <a href='/'>Home</a>
-        <a href='/profile'>Profile</a>
-        <a href="/savedEvents">Saved Events</a>
-        <a href='/logout'>Logout</a>
-    </nav>
+  {% extends "layout.html" %}
+  {% set active_page = "savedEvents" %}
+  {% block content %}
     <section class="header">
             <h1>Saved Events</h1>
     </section>
@@ -26,28 +23,15 @@
         {% endif %}
     </section>
     <br>
-    <section class="results">
+    <section class="events">
         {% if events %}
-            <h1 class="title">Your Saved Events:</h1>
+            <h1>Your saved events:</h1>
             <br>
-            <ul>
-                {% for event in events %}
-                  <li class = 'event-name'>{{ event[0] }}</li>
-                  <br>
-                  <li>{{ event[1] }}</li>
-                  <li>{{ event[2] }}</li>
-                    <li>{{ event[3] }}</li>
-                  <br>
-                  <li>Eventbrite link: <a href={{ event[4] }}>{{ event[4] }}</a></li>
-                <hr>
-                {% endfor %}
-            </ul>
+            {% block eventList %}
+              {{ super() }}
+            {% endblock %}
         {% endif %}
-    </section>
-    <section class="footer">
-        <div id="logo">
-            <h1>Welcome to FitBit Event Finder</h1>
-        </div>
-    </section>
+      </section>
+  {% endblock %}
 </body>
 </html>

@@ -168,7 +168,9 @@ form {
     margin-top: 10px;
 }
 
-
+hr{
+  margin-top: 20px;
+}
 /*profile*/
 .title{
     text-align: center;
@@ -199,12 +201,7 @@ form {
     visibility: hidden;
 }
 
-li{
-  margin-right: 100px;
-  margin-left: 100px;
-}
-
-hr{
+.event-block{
   margin-right: 100px;
   margin-left: 100px;
 }
@@ -212,8 +209,9 @@ hr{
 /*footer for all pages*/
 .footer{
   color: white;
-    height: 500px;
-    background-color: #648880;
+  height: 500px;
+  background-color: #648880;
+  margin-top: 20px;
 }
 
 #logo {
@@ -222,4 +220,13 @@ hr{
     font-size: 40px;
     text-transform: uppercase;
     font-weight: 100;
+}
+
+.event-name{
+  font-weight: bold;
+}
+
+.activities{
+  margin: auto;
+  text-align: center;
 }
