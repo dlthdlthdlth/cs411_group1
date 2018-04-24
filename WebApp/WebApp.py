@@ -125,13 +125,23 @@ def register():
         return redirect(flask.url_for('protected'))
 
 #user profile route
-@app.route('/profile')
+@app.route('/profile', methods=['GET', 'POST'])
 @flask_login.login_required
 def protected():
     activities = getActivities()
-    events = recommendEvents(activities)
-    insertActivities(activities)
-    return render_template('profile.html', name=flask_login.current_user.name, activities = activities, events = events)
+    if flask.request.method == 'GET':
+        events = recommendEvents(activities)
+        insertActivities(activities)
+        return render_template('profile.html', name=flask_login.current_user.name, activities = activities, location = flask_login.current_user.location, events = events)
+    else:
+        location = request.form.get('change-location')
+        flask_login.current_user.location = location
+        emptyRecommendations()
+        events = recommendEvents(activities)
+        insertActivities(activities)
+        cursor = conn.cursor()
+        cursor.execute("UPDATE USER SET LOCATION = '{0}' WHERE FBID = '{1}'".format(location,flask_login.current_user.id))
+        return render_template('profile.html', name= flask_login.current_user.name, activities = activities, location = location, events = events)
 
 #search events
 #@flask_login.login_required
@@ -139,27 +149,34 @@ def protected():
 def searchEventsRoute():
     cursor = conn.cursor()
     #check results cache for term given.
-    searchterm = flask.request.form['search_term']
-    cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK, RNUM FROM RESULTCACHE WHERE SID = '{0}'".format(searchterm))
+    search_term = flask.request.form['search_term']
+    location_term = flask.request.form['city']
+    cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK, RNUM FROM RESULTCACHE WHERE SID = '{0}' AND LOCATION_TERM = '{1}'".format(search_term, location_term))
     events = cursor.fetchall()
     events = [{"name": str(events[i][0]), "date": str(events[i][1]), "venue": str(events[i][2]), "desc": str(events[i][3]), "link": str(events[i][4]), "resNum": i } for i in range(len(events))]
     if(events):
         #results found, return them.
         print("CACHE PULL")
-        return render_template('searchEvents.html', events= events, name= flask_login.current_user.name, message="Here Are Your Search Results!")
+        if flask_login.current_user.is_authenticated:
+            return render_template('searchEvents.html', events= events, name= flask_login.current_user.name, message="Here Are Your Search Results!")
+        else:
+            return render_template('searchEvents.html', events= events, message="Here Are Your Search Results!")
 
     else:
         #get first instance of search results.
-        events = searchEvents(flask.request.form['search_term'], flask_login.current_user.location)
-        events = [{"name":events[i][0], "date":reformatDate(events[i][1]), "venue":events[i][2], "desc":events[i][3], "link":events[i][4], "activity":events[i][5], "resNum": i} for i in range(len(events))]
+        events = searchEvents(flask.request.form['search_term'])
+        events = [{"name":events[i][0], "date":reformatDate(events[i][1]), "venue":events[i][2], "desc":events[i][3], "link":events[i][4], "activity":events[i][5], "resNum": i, "location_term": str(events[i][6])} for i in range(len(events))]
         #insert search results into the cache.
         print("api call")
         for event in events:
-            cursor.execute("INSERT INTO RESULTCACHE (SID, NAME, DATE, VENUE, DES, LINK, RNUM) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(searchterm, event["name"], event["date"], event["venue"], event["desc"], event["link"], event["resNum"]))
+            cursor.execute("INSERT INTO RESULTCACHE (SID, NAME, DATE, VENUE, DES, LINK, RNUM, LOCATION_TERM) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')".format(search_term, event["name"], event["date"], event["venue"], event["desc"], event["link"], event["resNum"], location_term))
         conn.commit()
         #delete old results
         deleteOldResults()
-        return render_template('searchEvents.html', events= events, name= flask_login.current_user.name, message="Here Are Your Search Results!")
+        if flask_login.current_user.is_authenticated:
+            return render_template('searchEvents.html', events= events, name= flask_login.current_user.name, message="Here Are Your Search Results!")
+        else:
+            return render_template('searchEvents.html', events= events, message="Here Are Your Search Results!")
 
 #helper function
 def searchcount():
@@ -181,11 +198,15 @@ def deleteOldResults():
         conn.commit()
 
 #search events api call
-def searchEvents(search_term, location):
+def searchEvents(search_term):
+    location_term = ''
+    if flask_login.current_user.is_authenticated:
+        location_term = flask_login.current_user.location
+    else:
+        location_term = flask.request.form['city']
     url = "https://www.eventbriteapi.com/v3/events/search/"
     head = {'Authorization': 'Bearer {}'.format(eventbrite_token)}
-    data = {"q": search_term, "sort_by": "date", "location.address": location, "categories":"108", "expand": "venue" } #108 is fitness category
-    # city = flask.request.form['city']   ######    needs to be done later
+    data = {"q": search_term, "sort_by": "date", "location.address": location_term, "categories":"108", "expand": "venue" } #108 is fitness category
     myResponse = requests.get(url, headers = head, params=data)
     results = []
     if(myResponse.ok):
@@ -219,7 +240,7 @@ def searchEvents(search_term, location):
             eventbrite_link = event['url']
 
             #results.append({"name":name, "desc": desc, "time":time, "venue":venue, "activity": activity})
-            results.append((name, date, venue, desc, eventbrite_link, search_term))
+            results.append((name, date, venue, desc, eventbrite_link, search_term, location_term))
     else:
         # If response code is not ok (200), print the resulting http error code with description
         myResponse.raise_for_status()
@@ -352,28 +373,28 @@ def recommendEvents(api_activities):
     db_activities = [str(db_activities[index][0]) for index in range(len(db_activities))]
 
     events = []
-
     #if activity list hasn't changed, load recommended events from the cache
     if  db_activities != [] and set(api_activities) == set(db_activities):
-        cursor.execute("SELECT TIME_MODIFIED FROM RECOMMENDATIONS WHERE FBID = '{0}'".format(flask_login.current_user.id))
-        time_modified = cursor.fetchall()[0][0]
-        now = datetime.now()
-        print (time_modified)
-        now_minus_10 = now - timedelta(minutes = 10)
-        #if its been less than 10 minutes since the recommended events were updated, pull from cache
-        if time_modified > now_minus_10:
-            print ("pulling from cache")
-            cursor.execute("SELECT SID, NAME, DATE, VENUE, DES, LINK FROM RECOMMENDATIONS WHERE FBID = '{0}'".format(flask_login.current_user.id))
-            events = cursor.fetchall()
-            events = [{"name": str(events[i][1]), "date": str(events[i][2]), "venue": str(events[i][3]), "desc": str(events[i][4]), "link": str(events[i][5]), "search_term": str(events[i][0]), "resNum": i } for i in range(len(events))]
-            return events
+        cursor.execute("SELECT TIME_MODIFIED FROM RECOMMENDATIONS WHERE FBID = '{0}' LIMIT 1".format(flask_login.current_user.id))
+        if cursor.rowcount != 0:
+            time_modified = cursor.fetchall()[0][0]
+            now = datetime.now()
+            print (time_modified)
+            now_minus_10 = now - timedelta(minutes = 10)
+            #if its been less than 10 minutes since the recommended events were updated, pull from cache
+            if time_modified > now_minus_10:
+                print ("pulling from cache")
+                cursor.execute("SELECT SID, NAME, DATE, VENUE, DES, LINK FROM RECOMMENDATIONS WHERE FBID = '{0}'".format(flask_login.current_user.id))
+                events = cursor.fetchall()
+                events = [{"name": str(events[i][1]), "date": str(events[i][2]), "venue": str(events[i][3]), "desc": str(events[i][4]), "link": str(events[i][5]), "search_term": str(events[i][0]), "resNum": i } for i in range(len(events))]
+                return events
 
     #empty the cache of recommended events and call searchEvents() with each of the user's activities
     emptyRecommendations()
     events = []
 
     for activity in api_activities:
-        event = searchEvents(activity, flask_login.current_user.location)
+        event = searchEvents(activity)
         events.append(event)
 
     #flatten the 2D array into a 1D array

@@ -77,10 +77,6 @@ a:hover {
 }
 
 
-h2, h3, h4{
-    color: #648880;
-}
-
 h2 { display: inline; }
 
 /*message*/
@@ -151,6 +147,9 @@ form {
     background: white;
     margin: auto;
     margin-top: 10px;
+}
+#change-location-btn{
+  padding: 2px 5px 2px 5px;
 }
 
 hr{
