@@ -164,7 +164,7 @@ def searchEventsRoute():
 
     else:
         #get first instance of search results.
-        events = searchEvents(flask.request.form['search_term'])
+        events = searchEvents(flask.request.form['search_term'], location_term = flask.request.form['city'])
         events = [{"name":events[i][0], "date":reformatDate(events[i][1]), "venue":events[i][2], "desc":events[i][3], "link":events[i][4], "is_free": events[i][5], "search_term":events[i][6], "resNum": i, "location_term": str(events[i][7])} for i in range(len(events))]
         #insert search results into the cache.
         print("api call")
@@ -198,13 +198,7 @@ def deleteOldResults():
         conn.commit()
 
 #search events api call
-def searchEvents(search_term):
-    location_term = ''
-
-    if flask.request.form:
-        location_term = flask.request.form['city']
-    else:
-        location_term = flask_login.current_user.location
+def searchEvents(search_term, location_term):
 
     url = "https://www.eventbriteapi.com/v3/events/search/"
     head = {'Authorization': 'Bearer {}'.format(eventbrite_token)}
@@ -241,7 +235,7 @@ def searchEvents(search_term):
 
             eventbrite_link = event['url']
 
-            is_free = event['is_free']
+            is_free = str(event['is_free'])
 
             results.append((name, date, venue, desc, eventbrite_link, is_free, search_term, location_term))
     else:
@@ -331,7 +325,6 @@ def getSavedEvents():
     cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK, IS_FREE FROM SAVEDEVENTS WHERE FBID = '{0}'".format(fbid))
     events = cursor.fetchall()
     events = [{"name": str(events[i][0]), "date": str(events[i][1]), "venue": str(events[i][2]), "desc": str(events[i][3]), "link": str(events[i][4]), "is_free":str(events[i][5]),  "resNum": i } for i in range(len(events))]
-    print (events)
     return render_template('savedEvents.html', events= events)
 
 #helper function for search events saved
@@ -382,7 +375,6 @@ def recommendEvents(api_activities):
         if cursor.rowcount != 0:
             time_modified = cursor.fetchall()[0][0]
             now = datetime.now()
-            print (time_modified)
             now_minus_10 = now - timedelta(minutes = 10)
             #if its been less than 10 minutes since the recommended events were updated, pull from cache
             if time_modified > now_minus_10:
@@ -397,7 +389,7 @@ def recommendEvents(api_activities):
     events = []
 
     for activity in api_activities:
-        event = searchEvents(activity)
+        event = searchEvents(activity, flask_login.current_user.location)
         events.append(event)
 
     #flatten the 2D array into a 1D array

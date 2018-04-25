@@ -185,10 +185,29 @@ hr{
     visibility: hidden;
 }
 
-.event-block{
+.event{
   margin-right: 100px;
   margin-left: 100px;
 }
+
+
+#filters{
+  text-align: center;
+}
+#filters ul {
+  display: inline-block;
+  text-align: left;
+  margin-top: -10px;
+}
+
+#filter-by{
+  text-align: center;
+}
+
+#change-location{
+  margin-bottom: 15px;
+}
+
 
 /*footer for all pages*/
 .footer{

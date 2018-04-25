@@ -40,6 +40,10 @@
         {%  if events %}
             <h1 class="title">Results</h1>
             <br/>
+            {% block filters %}
+            <!--  super() displays what is in this block in layout.html-->
+              {{ super() }}
+            {% endblock %}
             {% block eventList %}
             <!--  super() displays what is in this block in layout.html-->
               {{ super() }}

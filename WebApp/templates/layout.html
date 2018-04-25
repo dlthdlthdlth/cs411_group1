@@ -2,6 +2,55 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
+    <!-- Load JQuery -->
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+      crossorigin="anonymous">
+    </script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+      $('#filter-free').change(function() {
+        $('.event').each(function(){
+          if($('#filter-free').is(":checked")) {
+            if ($(this).hasClass('free-True')){
+              $(this).show();
+            }
+            else{
+              $(this).hide();
+            }
+          }
+          else{
+            $(this).show();
+          }
+        });
+      });
+
+      $('.filter-activity').change(function() {
+        var checkboxClicked = this
+        var activity = $(this).attr("id");
+        $('.event').each(function(){
+          if($(checkboxClicked).is(":checked")) {
+            if ($(this).hasClass(activity)){
+              $(this).show();
+            }
+            else{
+              $(this).hide();
+            }
+          }
+          else{
+            $(this).show();
+          }
+        });
+      });
+
+      $('#show-all').change(function() {
+        $('.event').each(function(){
+            $(this).show();
+        });
+      });
+    });
+    </script>
   </head>
   <body>
     <nav class="navigation">
@@ -11,21 +60,41 @@
         <a href='/logout'>Logout</a>
     </nav>
     {% block content %}
+
+    {% block filters %}
+    <div id="filters">
+      <p id="filter-by">Filter by:</p>
+      <ul>
+        <li><input type="radio" id="filter-free" name="filter"/>Free</li>
+        {% if activities %}
+          {% for activity in activities %}
+            <li><input type="radio" class= "filter-activity" id = "{{ activity }}" name="filter"/> {{ activity }}</li>
+          {% endfor %}
+        {% endif %}
+        <li><input type="radio" id="show-all" name="filter"/>Show All</li>
+      </ul>
+    </div>
+
+    {% endblock %}
+
       {% block eventList %}
+
         <ul>
             {% for event in events %}
-              <div class="event-block">
+              <div class="event {{ event['search_term'] }} free-{{ event['is_free'] }}">
                 <hr>
                 <li class = 'event-name'>{{ event['name'] }}</li>
                 <br>
+                <li></li>
                 <li>{{ event['date'] }}</li>
                 <li>{{ event['venue'] }}</li>
                 <br>
+                {% if event['is_free'] == 'True' %}
+                  <li><b>Free Event</b></li>
+                {% endif %}
+                <br>
                 <li>{{ event['desc'] }}</li>
                 <br>
-                <li>{{ event['is_free']}}</li>
-                <li>{{ event['search_term']}}</li>
-                <li>{{ event['location_term']}}</li>
                 <li>Eventbrite link: <a href={{ event['link'] }}>{{ event['link'] }}</a></li>
                 {% if active_page != "savedEvents" %}
                   <form action='/saveEventRecommendations' method='POST'>

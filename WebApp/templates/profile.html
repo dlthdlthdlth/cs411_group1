@@ -21,7 +21,7 @@
     <br />
     <section class="activities">
         {% if activities %}
-            <h1>Your FitBit Activities:</h1>
+            <h3>Your FitBit Activities:</h3>
             <ul>
                 {% for activity in activities %}
                 <li>{{ activity }}</li>
@@ -32,10 +32,14 @@
     <br/>
     <section class="events">
         {% if events %}
-            <h1>Recommended Events in {{ location }}:</h1>
-            <form action='/profile' method='POST'>
+            {% block filters %}
+            <!--  super() displays what is in this block in layout.html-->
+              {{ super() }}
+            {% endblock %}
+            <h2>Recommended Events in {{ location }}:</h2>
+            <form action='/profile' method='POST' id ="change-city-form">
                 <label for="change-location">Change city:</label>
-				            <input type='text' name='change-location' id='change-location'></input>
+                    <input type='text' name='change-location' id='change-location'></input>
                     <input type='submit' name='submit' class="btn-alt" id="change-location-btn"></input>
               </form>
             {% block eventList %}

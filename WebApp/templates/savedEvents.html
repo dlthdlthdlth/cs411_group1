@@ -27,6 +27,10 @@
         {% if events %}
             <h1>Your saved events:</h1>
             <br>
+            {% block filters %}
+            <!--  super() displays what is in this block in layout.html-->
+              {{ super() }}
+            {% endblock %}
             {% block eventList %}
               {{ super() }}
             {% endblock %}
