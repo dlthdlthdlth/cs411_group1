@@ -23,6 +23,9 @@
                 <br>
                 <li>{{ event['desc'] }}</li>
                 <br>
+                <li>{{ event['is_free']}}</li>
+                <li>{{ event['search_term']}}</li>
+                <li>{{ event['location_term']}}</li>
                 <li>Eventbrite link: <a href={{ event['link'] }}>{{ event['link'] }}</a></li>
                 {% if active_page != "savedEvents" %}
                   <form action='/saveEventRecommendations' method='POST'>
