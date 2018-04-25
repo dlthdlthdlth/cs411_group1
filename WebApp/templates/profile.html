@@ -32,20 +32,21 @@
     <br/>
     <section class="events">
         {% if events %}
-            {% block filters %}
-            <!--  super() displays what is in this block in layout.html-->
-              {{ super() }}
-            {% endblock %}
             <h2>Recommended Events in {{ location }}:</h2>
             <form action='/profile' method='POST' id ="change-city-form">
                 <label for="change-location">Change city:</label>
                     <input type='text' name='change-location' id='change-location'></input>
                     <input type='submit' name='submit' class="btn-alt" id="change-location-btn"></input>
               </form>
+              {% block filters %}
+              <!--  super() displays what is in this block in layout.html-->
+                {{ super() }}
+              {% endblock %}
             {% block eventList %}
             <!--  super() displays what is in this block in layout.html-->
               {{ super() }}
             {% endblock %}
+
         {% endif %}
       </section>
     {% endblock %}
