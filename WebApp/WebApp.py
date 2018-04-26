@@ -151,12 +151,14 @@ def searchEventsRoute():
     #check results cache for term given.
     search_term = flask.request.form['search_term']
     location_term = flask.request.form['city']
+    datetime = flask.request.form['datetime']
+    radius = flask.request.form['radius']
     cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK, IS_FREE, RNUM FROM RESULTCACHE WHERE SID = '{0}' AND LOCATION_TERM = '{1}'".format(search_term, location_term))
     events = cursor.fetchall()
     events = [{"name": str(events[i][0]), "date": str(events[i][1]), "venue": str(events[i][2]), "desc": str(events[i][3]), "link": str(events[i][4]), "is_free":str(events[i][5]), "search_term":search_term, "location_term":location_term, "resNum": i } for i in range(len(events))]
     if(events):
         #results found, return them.
-        print("CACHE PULL")
+        #print("CACHE PULL")
         if flask_login.current_user.is_authenticated:
             return render_template('searchEvents.html', events= events, name= flask_login.current_user.name, message="Here Are Your Search Results!")
         else:
@@ -164,10 +166,10 @@ def searchEventsRoute():
 
     else:
         #get first instance of search results.
-        events = searchEvents(flask.request.form['search_term'], location_term = flask.request.form['city'])
+        events = searchEvents(flask.request.form['search_term'], location_term = flask.request.form['city'], datetime=datetime, radius=radius)
         events = [{"name":events[i][0], "date":reformatDate(events[i][1]), "venue":events[i][2], "desc":events[i][3], "link":events[i][4], "is_free": events[i][5], "search_term":events[i][6], "resNum": i, "location_term": str(events[i][7])} for i in range(len(events))]
         #insert search results into the cache.
-        print("api call")
+        #print("api call")
         for event in events:
             cursor.execute("INSERT INTO RESULTCACHE (SID, NAME, DATE, VENUE, DES, LINK, IS_FREE, RNUM, LOCATION_TERM) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')".format(search_term, event["name"], event["date"], event["venue"], event["desc"], event["link"], event["is_free"], event["resNum"], location_term))
         conn.commit()
@@ -198,11 +200,12 @@ def deleteOldResults():
         conn.commit()
 
 #search events api call
-def searchEvents(search_term, location_term):
-
+def searchEvents(search_term, location_term, datetime, radius):
+    print(datetime)
+    print(radius)
     url = "https://www.eventbriteapi.com/v3/events/search/"
     head = {'Authorization': 'Bearer {}'.format(eventbrite_token)}
-    data = {"q": search_term, "sort_by": "date", "location.address": location_term, "categories":"108", "expand": "venue" } #108 is fitness category
+    data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue", "location.within": radius +  "mi",} #108 is fitness category
     myResponse = requests.get(url, headers = head, params=data)
     results = []
     if(myResponse.ok):
@@ -249,6 +252,7 @@ def searchEvents(search_term, location_term):
 def reformatDate(date):
     new_date = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S')
     new_date = new_date.strftime("%B %-d at %-I:%M%p")
+    #print(new_date[-1])
     return new_date
 
 

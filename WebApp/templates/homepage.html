@@ -29,10 +29,16 @@
         <br/>
             <form action='/searchEvents' method='POST'>
                 <label for="search_term">Search For Events!</label>
-				            <input type='text' name='search_term' id='search_term'></input>
+                <input type='text' name='search_term' id='search_term'></input>
                 <br/>
                 <label for="city">City:</label>
-				            <input type='text' name='city' id='city' required></input>
+                <input type='text' name='city' id='city' required></input>
+                <br/>
+                <label for="date">Date & Time:</label>
+                <input type='datetime-local' name='datetime' id='date'></input>
+                <br/>
+                <label for="distance">Radius(miles):</label>
+                <input type='text' name='radius' id='radius'></input>
                 <br/>
                 <br/>
 				            <input type='submit' name='submit' class="btn btn-alt"></input>
