@@ -14,7 +14,7 @@ app.secret_key = 'still a secret'
 
 # These will need to be changed according to your credentials, app will not run without a database
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'hello12345' #--------------CHANGE----------------
+app.config['MYSQL_DATABASE_PASSWORD'] = '' #--------------CHANGE----------------
 app.config['MYSQL_DATABASE_DB'] = 'fitbit'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
@@ -22,11 +22,11 @@ mysql.init_app(app)
 
 #Fitbit api information
 redirect_uri = "http://127.0.0.1:5000/callback"
-client_id = "22CMVP" # ---------------CHANGE-----------------
-client_secret = "7dea60be5733957b72a3ebc7859ee6d2" # ---------------CHANGE-----------------
+client_id = "" # ---------------CHANGE-----------------
+client_secret = "" # ---------------CHANGE-----------------
 
 #EventBrite api information
-eventbrite_token = 'MHPPXZ3TBMC6E47PBCYK' # ---------------CHANGE-----------------
+eventbrite_token = '' # ---------------CHANGE-----------------
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
