@@ -3,17 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Search</title>
-    <link rel="icon" type="image/png" href="../static/logo_favcon.png"/>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='Webapp.css') }}">
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,500,700|Oswald:300,400,700" rel="stylesheet">
 </head>
 <body>
   {% extends "layout.html" %}
   {% block content %}
-
     <section class="header">
-    <img src="../static/logo_favcon.png" height="100" width="100">
-    <h2>FitBit Event Finder<h2>
+            <h2>FitBit Event Finder</h2>
     </section>
     <section class="message">
         <br />
@@ -31,25 +28,14 @@
     <div class="searchbar">
         <br/>
             <form action='/searchEvents' method='POST'>
-
                 <label for="search_term">Search For Events!</label>
-                <input type='text' name='search_term' id='search_term'></input>
-
-                <label for="search_term">Search For Events:</label>
-				            <input type='text' name='search_term' id='search_term'></input>
-
+				<input type='text' name='search_term' id='search_term'></input>
                 <br/>
                 <label for="city">City:</label>
-                <input type='text' name='city' id='city' required></input>
-                <br/>
-                <label for="date">Date & Time:</label>
-                <input type='datetime-local' name='datetime' id='date'></input>
-                <br/>
-                <label for="distance">Radius(miles):</label>
-                <input type='text' name='radius' id='radius'></input>
+				<input type='text' name='city' id='city'></input>
                 <br/>
                 <br/>
-				            <input type='submit' name='submit' class="btn btn-alt"></input>
+				<input type='submit' name='submit' class="btn btn-alt"></input>
             </form>
         <br/>
     </div>

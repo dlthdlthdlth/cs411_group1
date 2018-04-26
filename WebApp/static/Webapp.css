@@ -64,6 +64,7 @@ a:hover {
 }
 
 /*header*/
+
 .header {
     text-align: center;
     font-size: 30px;
@@ -75,7 +76,6 @@ a:hover {
     line-height: 200px;
     vertical-align: middle;
 }
-
 
 h2 { display: inline; }
 
@@ -103,6 +103,9 @@ h2 { display: inline; }
 }
 
 /*homepage*/
+.logo {
+  background-color: #dfe2e5;
+}
 .content{
     text-align: center;
     font-size: 25px;
