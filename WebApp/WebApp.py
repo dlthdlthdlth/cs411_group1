@@ -166,8 +166,12 @@ def searchEventsRoute():
             return render_template('searchEvents.html', events= events, message="Here Are Your Search Results!")
 
     else:
-        #get first instance of search results.
-        events = searchEvents(flask.request.form['search_term'], location_term = flask.request.form['city'])
+        # get first instance of search results
+        if(datetime == '' and radius == ''):
+            events = searchEvents(flask.request.form['search_term'], location_term=flask.request.form['city'])
+        else:
+            events = searchEvents2(flask.request.form['search_term'], location_term=flask.request.form['city'], datetime=datetime, radius=radius)
+
         events = [{"name":events[i][0], "date":reformatDate(events[i][1]), "venue":events[i][2], "desc":events[i][3], "link":events[i][4], "is_free": events[i][5], "search_term":events[i][6], "resNum": i, "location_term": str(events[i][7])} for i in range(len(events))]
         #insert search results into the cache.
         #print("api call")
