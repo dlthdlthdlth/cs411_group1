@@ -26,15 +26,22 @@
     <br />
     <div class="searchbar">
         <br/>
-            <form action='/searchEvents2' method='POST'>
+            <form action='/searchEvents' method='POST'>
                 <label for="search_term">Search For Events!</label>
 				<input type='text' name='search_term' id='search_term'></input>
                 <br/>
                 <label for="city">City:</label>
 				<input type='text' name='city' id='city'></input>
                 <br/>
-                <label for="date">Date & Time:</label>
-                <input type='datetime-local' name='datetime' id='date'></input>
+                <label for="date">Dates:</label>
+                <input type='radio' name='datekey' value='today' id='date' checked>Today</input>
+                <input type='radio' name='datekey' value='tomorrow' id='date'>Tomorrow</input>
+                <input type='radio' name='datekey' value='this_week' id='date'>This Week</input>
+                <input type='radio' name='datekey' value='next_week' id='date'>Next Week</input>
+                <input type='radio' name='datekey' value='this_weekend' id='date'>This Weekend</input>
+                <input type='radio' name='datekey' value='next_month' id='date'>Next Month</input>
+                <input type='radio' name='datekey' value='this_month' id='date'>This Month</input>
+                <input type='radio' name='datekey' value='all' id='date'>All</input>
                 <br/>
                 <label for="distance">Radius(miles):</label>
                 <input type='text' name='radius' id='radius'></input>
