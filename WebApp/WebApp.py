@@ -14,7 +14,7 @@ app.secret_key = 'still a secret'
 
 # These will need to be changed according to your credentials, app will not run without a database
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '' #--------------CHANGE----------------
+app.config['MYSQL_DATABASE_PASSWORD'] = 'giggaman123' #--------------CHANGE----------------
 app.config['MYSQL_DATABASE_DB'] = 'fitbit'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
@@ -22,11 +22,11 @@ mysql.init_app(app)
 
 #Fitbit api information
 redirect_uri = "http://127.0.0.1:5000/callback"
-client_id = "" # ---------------CHANGE-----------------
-client_secret = "" # ---------------CHANGE-----------------
+client_id = "22CMVP" # ---------------CHANGE-----------------
+client_secret = "e1839ff5942592bc9192f780efb83cdf" # ---------------CHANGE-----------------
 
 #EventBrite api information
-eventbrite_token = '' # ---------------CHANGE-----------------
+eventbrite_token = 'MHPPXZ3TBMC6E47PBCYK' # ---------------CHANGE-----------------
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
@@ -153,6 +153,7 @@ def searchEventsRoute():
     location_term = flask.request.form['city']
     datetime = flask.request.form['datetime']
     radius = flask.request.form['radius']
+
     cursor.execute("SELECT NAME, DATE, VENUE, DES, LINK, IS_FREE, RNUM FROM RESULTCACHE WHERE SID = '{0}' AND LOCATION_TERM = '{1}'".format(search_term, location_term))
     events = cursor.fetchall()
     events = [{"name": str(events[i][0]), "date": str(events[i][1]), "venue": str(events[i][2]), "desc": str(events[i][3]), "link": str(events[i][4]), "is_free":str(events[i][5]), "search_term":search_term, "location_term":location_term, "resNum": i } for i in range(len(events))]
@@ -166,7 +167,7 @@ def searchEventsRoute():
 
     else:
         #get first instance of search results.
-        events = searchEvents(flask.request.form['search_term'], location_term = flask.request.form['city'], datetime=datetime, radius=radius)
+        events = searchEvents(flask.request.form['search_term'], location_term = flask.request.form['city'])
         events = [{"name":events[i][0], "date":reformatDate(events[i][1]), "venue":events[i][2], "desc":events[i][3], "link":events[i][4], "is_free": events[i][5], "search_term":events[i][6], "resNum": i, "location_term": str(events[i][7])} for i in range(len(events))]
         #insert search results into the cache.
         #print("api call")
@@ -200,12 +201,57 @@ def deleteOldResults():
         conn.commit()
 
 #search events api call
-def searchEvents(search_term, location_term, datetime, radius):
+def searchEvents(search_term, location_term):
+    url = "https://www.eventbriteapi.com/v3/events/search/"
+    head = {'Authorization': 'Bearer {}'.format(eventbrite_token)}
+    data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue"} #108 is fitness category
+    myResponse = requests.get(url, headers = head, params=data)
+    results = []
+    if(myResponse.ok):
+        jData = json.loads(myResponse.text)
+        events = jData['events']
+        for event in events:
+            #format the strings for the database
+            name = event['name']['text']
+            name = list(name)
+            for j in range(len(name)):
+                if(name[j] == "'"):
+                    name[j] = "''"
+            name = "".join(name)
+
+            date = event['start']['local']
+
+            venue = event['venue']['address']['address_1']
+            if venue == None:
+                venue = "Venue in description."
+
+            desc = event['description']['text']
+            if desc == None:
+                desc = "No description provided."
+            else:
+                desc = list(desc)
+                for i in range(len(desc)):
+                    if(desc[i] == "'"):
+                        desc[i] = "''"
+                desc = "".join(desc)
+
+            eventbrite_link = event['url']
+
+            is_free = str(event['is_free'])
+
+            results.append((name, date, venue, desc, eventbrite_link, is_free, search_term, location_term))
+    else:
+        # If response code is not ok (200), print the resulting http error code with description
+        myResponse.raise_for_status()
+
+    return results
+
+def searchEvents2(search_term, location_term, datetime, radius):
     print(datetime)
     print(radius)
     url = "https://www.eventbriteapi.com/v3/events/search/"
     head = {'Authorization': 'Bearer {}'.format(eventbrite_token)}
-    data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue", "location.within": radius +  "mi",} #108 is fitness category
+    data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue", "location.within": radius +  "mi"} #108 is fitness category
     myResponse = requests.get(url, headers = head, params=data)
     results = []
     if(myResponse.ok):
