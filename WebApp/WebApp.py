@@ -14,7 +14,7 @@ app.secret_key = 'still a secret'
 
 # These will need to be changed according to your credentials, app will not run without a database
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '' #--------------CHANGE----------------
+app.config['MYSQL_DATABASE_PASSWORD'] = 'giggaman123' #--------------CHANGE----------------
 app.config['MYSQL_DATABASE_DB'] = 'fitbit'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
@@ -22,11 +22,11 @@ mysql.init_app(app)
 
 #Fitbit api information
 redirect_uri = "http://127.0.0.1:5000/callback"
-client_id = "" # ---------------CHANGE-----------------
-client_secret = "" # ---------------CHANGE-----------------
+client_id = "22CMVP" # ---------------CHANGE-----------------
+client_secret = "3334bf579f6c07442a70f90c890491aa" # ---------------CHANGE-----------------
 
 #EventBrite api information
-eventbrite_token = '' # ---------------CHANGE-----------------
+eventbrite_token = 'MHPPXZ3TBMC6E47PBCYK' # ---------------CHANGE-----------------
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
@@ -139,6 +139,10 @@ def protected():
         radius = flask.request.form['radius']
         flask_login.current_user.location = location
         emptyRecommendations()
+        print("profile dates")
+        print(datetime)
+        print("radius")
+        print(radius)
         if(datekey == 'all' and radius == ''):
             events = recommendEvents(activities)
             insertActivities(activities)
@@ -172,6 +176,7 @@ def searchEventsRoute():
     if(events):
         #results found, return them.
         #print("CACHE PULL")
+        deleteOldResults()
         if flask_login.current_user.is_authenticated:
             return render_template('searchEvents.html', events= events, name= flask_login.current_user.name, message="Here Are Your Search Results!")
         else:
@@ -179,7 +184,11 @@ def searchEventsRoute():
 
     else:
         # get first instance of search results
-        if(datetime == 'all' and radius == ''):
+        print("search events dates")
+        print(dateKey)
+        print("radius")
+        print(radius)
+        if(dateKey == 'all' and radius == ''):
             events = searchEvents(flask.request.form['search_term'], location_term=flask.request.form['city'])
         else:
             events = searchEvents2(flask.request.form['search_term'], location_term=flask.request.form['city'], dateKey= dateKey, radius=radius)
@@ -200,14 +209,14 @@ def searchEventsRoute():
 #helper function
 def searchcount():
     cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(DISTINCT SID) FROM RESULTCACHE")
-    count = cursor.fetchall()[0][0]
+    cursor.execute("SELECT COUNT(DISTINCT SID), COUNT(DISTINCT LOCATION_TERM) FROM RESULTCACHE")
+    count = cursor.fetchall()[0]
     return count
 
 #deletes old results from results cache if more than 5 searches have occured.
 def deleteOldResults():
     count = searchcount()
-    if(count > 5):
+    if(count[0] > 5 or count[1] > 5):
         #get SID of first record in cache.
         cursor = conn.cursor()
         cursor.execute("SELECT SID FROM RESULTCACHE ORDER BY ID LIMIT 1")
@@ -490,6 +499,10 @@ def recommendEvents2(api_activities, datekey, radius):
     #empty the cache of recommended events and call searchEvents() with each of the user's activities
     emptyRecommendations()
     events = []
+    print("recommend events dates")
+    print(datetime)
+    print("radius")
+    print(radius)
 
     for activity in api_activities:
         event = searchEvents2(activity, flask_login.current_user.location, dateKey= datekey, radius= radius)
