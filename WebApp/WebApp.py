@@ -274,7 +274,10 @@ def searchEvents(search_term, location_term):
 def searchEvents2(search_term, location_term, dateKey, radius):
     url = "https://www.eventbriteapi.com/v3/events/search/"
     head = {'Authorization': 'Bearer {}'.format(eventbrite_token)}
-    data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue", "location.within": radius +  "mi", "start_date.keyword": dateKey} #108 is fitness category
+    key = dateKey
+    if (key == 'all'):
+        key = ''
+    data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue", "location.within": radius +  "mi", "start_date.keyword": key} #108 is fitness category
     myResponse = requests.get(url, headers = head, params=data)
     results = []
     if(myResponse.ok):
@@ -503,7 +506,6 @@ def recommendEvents2(api_activities, datekey, radius):
     print(datetime)
     print("radius")
     print(radius)
-
     for activity in api_activities:
         event = searchEvents2(activity, flask_login.current_user.location, dateKey= datekey, radius= radius)
         events.append(event)
