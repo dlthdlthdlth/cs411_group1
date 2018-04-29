@@ -49,7 +49,12 @@
             $(this).show();
         });
       });
+
+      $('.date').on('change', function() {
+        $(this).closest("form").submit();
+      });
     });
+
     </script>
   </head>
   <body>
@@ -63,16 +68,18 @@
 
     {% block filters %}
     <div id="filters">
-      <p id="filter-by">Filter by:</p>
-      <ul>
-        <li><input type="radio" id="filter-free" name="filter"/>Free</li>
-        {% if activities %}
-          {% for activity in activities %}
-            <li><input type="radio" class= "filter-activity" id = "{{ activity }}" name="filter"/> {{ activity }}</li>
-          {% endfor %}
-        {% endif %}
-        <li><input type="radio" id="show-all" name="filter"/>Show All</li>
-      </ul>
+      <button class="btn-alt">Filter by...</button>
+        <div class="dropdown-content">
+          <ul>
+            <li><input type="radio" id="filter-free" name="filter"/>Free</li>
+            {% if activities %}
+              {% for activity in activities %}
+                <li><input type="radio" class= "filter-activity" id = "{{ activity }}" name="filter"/> {{ activity }}</li>
+              {% endfor %}
+            {% endif %}
+            <li><input type="radio" id="show-all" name="filter"/>Show All</li>
+          </ul>
+        </div>
     </div>
 
     {% endblock %}

@@ -6,6 +6,17 @@
     <link rel="icon" type="image/png" href="../static/logo_favcon.png"/>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='Webapp.css') }}">
         <link href="https://fonts.googleapis.com/css?family=Roboto:100,500,700|Oswald:300,400,700" rel="stylesheet">
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+      crossorigin="anonymous">
+    </script>
+    <script type="text/javascript">
+      $('.date').change(function() {
+        console.log("hi")
+        $("#change-city-form").submit();
+      });
+    </script>
 </head>
 <body>
   {% extends "layout.html" %}
@@ -23,7 +34,7 @@
     <br />
     <section class="activities">
         {% if activities %}
-            <h3>Your FitBit Activities:</h3>
+            <h2>Your FitBit Activities:</h2>
             <ul>
                 {% for activity in activities %}
                 <li>{{ activity }}</li>
@@ -34,12 +45,11 @@
     <br/>
     <section class="events">
         {% if events %}
-            <h2>Recommended Events in {{ location }}:</h2>
             <form action='/profile' method='POST' id ="change-city-form">
-                <label for="change-location">Change City:</label>
+                <label for="change-location"><b>Change City:</b></label>
                 <input type='text' name='change-location' id='change-location'></input>
                 <br />
-                <label for="date">Change Dates:</label>
+                <label for="date"><b>Change Dates:</b></label>
                 <input type='radio' name='datekey' value='today'>Today</input>
                 <input type='radio' name='datekey' value='tomorrow' id='date'>Tomorrow</input>
                 <input type='radio' name='datekey' value='this_week' id='date'>This Week</input>
@@ -50,11 +60,12 @@
                 <input type='radio' name='datekey' value='all' id='date' checked>All</input>
                 <br />
                 <br />
-                <label for="distance">Change Radius(miles):</label>
+                <label for="distance"><b>Change Radius (miles):</b></label>
                 <input type='text' name='radius' id='radius' placeholder = 'optional'></input>
                 <br />
                 <input type='submit' name='submit' class="btn-alt" id="change-location-btn"></input>
             </form>
+            <h2>Recommended Events in {{ location }}:</h2>
               {% block filters %}
               <!--  super() displays what is in this block in layout.html-->
                 {{ super() }}

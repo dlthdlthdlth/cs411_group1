@@ -166,15 +166,6 @@ form {
 hr{
   margin-top: 20px;
 }
-/*profile*/
-.title{
-    text-align: center;
-    font-size: 35px;
-    font-weight: 200;
-    letter-spacing: .5px;
-    text-transform: uppercase;
-    margin-top: 40px;
-}
 
 .event-name{
     font-weight: bold;
@@ -202,9 +193,9 @@ hr{
 }
 
 
-#filters{
+/* #filters{
   text-align: center;
-}
+} */
 #filters ul {
   display: inline-block;
   text-align: left;
@@ -243,4 +234,61 @@ hr{
 .activities{
   margin: auto;
   text-align: center;
+}
+
+#filters{
+  text-align: center;
+}
+#filters ul {
+  display: inline-block;
+  text-align: left;
+  margin-top: -10px;
+}
+
+#filter-by{
+  text-align: center;
+}
+
+
+#filters{
+  margin-top: -10px;
+  position: relative;
+  display: inline-block;
+
+}
+
+.dropdown-content {
+    display: none;
+    position: relative;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    /* z-index: 1; */
+}
+
+.dropdown-content ul {
+    display: block;
+    text-align: left;
+    margin-top: -10px;
+}
+.dropdown-content li{
+  margin-top: 10px;
+}
+
+.dropdown-content input:hover {background-color: #ddd}
+
+#filters:hover .dropdown-content {
+    display: block;
+}
+
+#filters:hover .dropbtn {
+    background-color: #3e8e41;
+}
+
+form input{
+  margin-top:10px;
+}
+
+#results-heading{
+  margin-bottom: 0px;
 }

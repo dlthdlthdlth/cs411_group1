@@ -31,13 +31,13 @@
     <div class="searchbar">
         <br/>
             <form action='/searchEvents' method='POST'>
-                <label for="search_term">Search For Events:</label>
+                <label for="search_term"><b>Enter a search term:</b></label>
                 <input type='text' name='search_term' id='search_term'></input>
                 <br/>
-                <label for="city">City:</label>
+                <label for="city"><b>City:</b></label>
                 <input type='text' name='city' id='city' required></input>
                 <br/>
-                <label for="date">Dates:</label>
+                <label for="date"><b>Dates:</b></label>
                 <input type='radio' name='datekey' value='today' id='date'>Today</input>
                 <input type='radio' name='datekey' value='tomorrow' id='date'>Tomorrow</input>
                 <input type='radio' name='datekey' value='this_week' id='date'>This Week</input>
@@ -47,7 +47,7 @@
                 <input type='radio' name='datekey' value='this_month' id='date'>This Month</input>
                 <input type='radio' name='datekey' value='all' id='date' checked>All</input>
                 <br/>
-                <label for="distance">Radius(miles):</label>
+                <label for="distance"><b>Radius (miles):</b></label>
                 <input type='text' name='radius' id='radius' placeholder = 'optional'></input>
                 <br/>
                 <br/>
