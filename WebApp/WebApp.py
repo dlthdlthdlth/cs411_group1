@@ -135,6 +135,7 @@ def protected():
     else:
         if flask.request.form['change-location'] != '':
             location = flask.request.form['change-location']
+            emptyRecommendations()
         else:
             location = flask_login.current_user.location
         print (location)
@@ -142,22 +143,14 @@ def protected():
         datekey = flask.request.form['datekey']
         radius = flask.request.form['radius']
         flask_login.current_user.location = location
-        emptyRecommendations()
 
-        if(datekey == 'all' and radius == ''):
-            events = recommendEvents(activities)
-            insertActivities(activities)
-            cursor = conn.cursor()
-            cursor.execute("UPDATE USER SET LOCATION = '{0}' WHERE FBID = '{1}'".format(location,flask_login.current_user.id))
-            return render_template('profile.html', name= flask_login.current_user.name, activities = activities, location = location, events = events)
-        else:
-            events = recommendEvents2(activities, datekey, radius)
-            insertActivities(activities)
-            cursor = conn.cursor()
-            cursor.execute(
-                "UPDATE USER SET LOCATION = '{0}' WHERE FBID = '{1}'".format(location, flask_login.current_user.id))
-            return render_template('profile.html', name=flask_login.current_user.name, activities=activities,
-                                   location=location, events=events)
+        events = recommendEvents(activities, datekey, radius)
+        insertActivities(activities)
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE USER SET LOCATION = '{0}' WHERE FBID = '{1}'".format(location, flask_login.current_user.id))
+        return render_template('profile.html', name=flask_login.current_user.name, activities=activities,
+                               location=location, events=events)
 
 #search events
 #@flask_login.login_required
@@ -178,7 +171,7 @@ def searchEventsRoute():
         #print("CACHE PULL")
         deleteOldResults()
         if flask_login.current_user.is_authenticated:
-            return render_template('searchEvents.html', events= events, name= flask_login.current_user.name, message="Here Are Your Search Results!")
+            return render_template('searchEvents.html', events= events, name= flask_login.current_user.name)
         else:
             return render_template('searchEvents.html', events= events, message="Here Are Your Search Results!")
 
@@ -199,9 +192,9 @@ def searchEventsRoute():
         #delete old results
         deleteOldResults()
         if flask_login.current_user.is_authenticated:
-            return render_template('searchEvents.html', events= events, name= flask_login.current_user.name, message="Here Are Your Search Results!")
+            return render_template('searchEvents.html', events= events, name= flask_login.current_user.name)
         else:
-            return render_template('searchEvents.html', events= events, message="Here Are Your Search Results!")
+            return render_template('searchEvents.html', events= events)
 
 #helper function
 def searchcount():
@@ -372,12 +365,16 @@ def insertActivities(activities):
     conn.commit()
     return
 
-def recommendEvents(api_activities):
+
+def recommendEvents(api_activities, datekey='all', radius=''):
     #fill the table with new events
     cursor = conn.cursor()
     cursor.execute("SELECT ACTIVITY FROM ACTIVITIES WHERE FBID = '{0}'".format(flask_login.current_user.id))
     db_activities = cursor.fetchall()
     db_activities = [str(db_activities[index][0]) for index in range(len(db_activities))]
+
+    print ("radius: " + radius)
+    print ("datekey: " + datekey)
 
     #if activity list hasn't changed, load recommended events from the cache
     if  db_activities != [] and set(api_activities) == set(db_activities):
@@ -388,54 +385,12 @@ def recommendEvents(api_activities):
             now_minus_10 = now - timedelta(minutes = 10)
             #if its been less than 10 minutes since the recommended events were updated, pull from cache
             if time_modified > now_minus_10:
-                print ("pulling from cache")
-                cursor.execute("SELECT SID, NAME, DATE, VENUE, DES, LINK, IS_FREE FROM RECOMMENDATIONS WHERE FBID = '{0}'".format(flask_login.current_user.id))
+                cursor.execute("SELECT SID, NAME, DATE, VENUE, DES, LINK, IS_FREE, DATE_KEY, RADIUS FROM RECOMMENDATIONS WHERE FBID = '{0}' AND DATE_KEY = '{1}' AND RADIUS = '{2}'".format(flask_login.current_user.id, datekey, radius))
                 events = cursor.fetchall()
-                events = [{"name": str(events[i][1]), "date": str(events[i][2]), "venue": str(events[i][3]), "desc": str(events[i][4]), "link": str(events[i][5]), "is_free": str(events[i][6]), "search_term": str(events[i][0]), "resNum": i } for i in range(len(events))]
-                return events
-
-    #empty the cache of recommended events and call searchEvents() with each of the user's activities
-    emptyRecommendations()
-    events = []
-
-    for activity in api_activities:
-        event = searchEvents(activity, flask_login.current_user.location)
-        events.append(event)
-
-    #flatten the 2D array into a 1D array
-    events = [event for category in events for event in category]
-    #sort events by date
-    events = sorted(events, key=lambda x: x[1])
-
-    #Put date in readable format
-    events = [{"name":events[i][0], "date":reformatDate(events[i][1]), "venue":events[i][2], "desc":events[i][3], "link":events[i][4], "is_free":events[i][5], "search_term":events[i][6], "resNum": i} for i in range(len(events))]
-    #insert events into table
-    for event in events:
-        cursor.execute("INSERT INTO RECOMMENDATIONS (FBID, SID, NAME, DATE, VENUE, DES, LINK, IS_FREE, RNUM) VALUES ('{0}','{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}') ON DUPLICATE KEY UPDATE RNUM=RNUM".format( flask_login.current_user.id, event["search_term"], event["name"], event["date"], event["venue"], event["desc"], event["link"], event["is_free"], event["resNum"]))
-    conn.commit()
-    return events
-
-def recommendEvents2(api_activities, datekey, radius):
-    #fill the table with new events
-    cursor = conn.cursor()
-    cursor.execute("SELECT ACTIVITY FROM ACTIVITIES WHERE FBID = '{0}'".format(flask_login.current_user.id))
-    db_activities = cursor.fetchall()
-    db_activities = [str(db_activities[index][0]) for index in range(len(db_activities))]
-
-    #if activity list hasn't changed, load recommended events from the cache
-    # if  db_activities != [] and set(api_activities) == set(db_activities):
-    #     cursor.execute("SELECT TIME_MODIFIED FROM RECOMMENDATIONS WHERE FBID = '{0}' LIMIT 1".format(flask_login.current_user.id))
-    #     if cursor.rowcount != 0:
-    #         time_modified = cursor.fetchall()[0][0]
-    #         now = datetime.now()
-    #         now_minus_10 = now - timedelta(minutes = 10)
-    #         #if its been less than 10 minutes since the recommended events were updated, pull from cache
-    #         if time_modified > now_minus_10:
-    #             print ("pulling from cache")
-    #             cursor.execute("SELECT SID, NAME, DATE, VENUE, DES, LINK, IS_FREE FROM RECOMMENDATIONS WHERE FBID = '{0}'".format(flask_login.current_user.id))
-    #             events = cursor.fetchall()
-    #             events = [{"name": str(events[i][1]), "date": str(events[i][2]), "venue": str(events[i][3]), "desc": str(events[i][4]), "link": str(events[i][5]), "is_free": str(events[i][6]), "search_term": str(events[i][0]), "resNum": i } for i in range(len(events))]
-    #             return events
+                if cursor.rowcount != 0:
+                    events = [{"name": str(events[i][1]), "date": str(events[i][2]), "venue": str(events[i][3]), "desc": str(events[i][4]), "link": str(events[i][5]), "is_free": str(events[i][6]), "search_term": str(events[i][0]), "resNum": i } for i in range(len(events))]
+                    print ("pulling from cache")
+                    return events
 
     #empty the cache of recommended events and call searchEvents() with each of the user's activities
     emptyRecommendations()
@@ -447,7 +402,6 @@ def recommendEvents2(api_activities, datekey, radius):
     #flatten the 2D array into a 1D array
     events = [event for category in events for event in category]
 
-    print (len(events))
     #sort events by date
     events = sorted(events, key=lambda x: x[1])
 
@@ -455,7 +409,7 @@ def recommendEvents2(api_activities, datekey, radius):
     events = [{"name":events[i][0], "date":reformatDate(events[i][1]), "venue":events[i][2], "desc":events[i][3], "link":events[i][4], "is_free":events[i][5], "search_term":events[i][6], "resNum": i} for i in range(len(events))]
     #insert events into table
     for event in events:
-        cursor.execute("INSERT INTO RECOMMENDATIONS (FBID, SID, NAME, DATE, VENUE, DES, LINK, IS_FREE, RNUM) VALUES ('{0}','{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}') ON DUPLICATE KEY UPDATE RNUM=RNUM".format( flask_login.current_user.id, event["search_term"], event["name"], event["date"], event["venue"], event["desc"], event["link"], event["is_free"], event["resNum"]))
+        cursor.execute("INSERT INTO RECOMMENDATIONS (FBID, SID, NAME, DATE, VENUE, DES, LINK, IS_FREE, DATE_KEY, RADIUS, RNUM) VALUES ('{0}','{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}') ON DUPLICATE KEY UPDATE RNUM=RNUM".format( flask_login.current_user.id, event["search_term"], event["name"], event["date"], event["venue"], event["desc"], event["link"], event["is_free"], datekey, radius, event["resNum"]))
     conn.commit()
     return events
 
