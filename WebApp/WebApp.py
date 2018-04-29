@@ -134,7 +134,11 @@ def protected():
         insertActivities(activities)
         return render_template('profile.html', name=flask_login.current_user.name, activities = activities, location = flask_login.current_user.location, events = events)
     else:
-        location = flask.request.form['change-location']
+        if flask.request.form['change-location'] != '':
+            location = flask.request.form['change-location']
+        else:
+            location = flask_login.current_user.location
+
         datekey = flask.request.form['datekey']
         radius = flask.request.form['radius']
         flask_login.current_user.location = location
@@ -151,6 +155,7 @@ def protected():
             return render_template('profile.html', name= flask_login.current_user.name, activities = activities, location = location, events = events)
         else:
             events = recommendEvents2(activities, datekey, radius)
+            print (events)
             insertActivities(activities)
             cursor = conn.cursor()
             cursor.execute(
@@ -191,7 +196,7 @@ def searchEventsRoute():
         if(dateKey == 'all' and radius == ''):
             events = searchEvents(flask.request.form['search_term'], location_term=flask.request.form['city'])
         else:
-            events = searchEvents2(flask.request.form['search_term'], location_term=flask.request.form['city'], dateKey= dateKey, radius=radius)
+            events = searchEvents(flask.request.form['search_term'], location_term=flask.request.form['city'], dateKey= dateKey, radius=radius)
 
         events = [{"name":events[i][0], "date":reformatDate(events[i][1]), "venue":events[i][2], "desc":events[i][3], "link":events[i][4], "is_free": events[i][5], "search_term":events[i][6], "resNum": i, "location_term": str(events[i][7])} for i in range(len(events))]
         #insert search results into the cache.
@@ -226,58 +231,22 @@ def deleteOldResults():
         conn.commit()
 
 #search events api call
-def searchEvents(search_term, location_term):
-    url = "https://www.eventbriteapi.com/v3/events/search/"
-    head = {'Authorization': 'Bearer {}'.format(eventbrite_token)}
-    data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue"} #108 is fitness category
-    myResponse = requests.get(url, headers = head, params=data)
-    results = []
-    if(myResponse.ok):
-        jData = json.loads(myResponse.text)
-        events = jData['events']
-        for event in events:
-            #format the strings for the database
-            name = event['name']['text']
-            name = list(name)
-            for j in range(len(name)):
-                if(name[j] == "'"):
-                    name[j] = "''"
-            name = "".join(name)
-
-            date = event['start']['local']
-
-            venue = event['venue']['address']['address_1']
-            if venue == None:
-                venue = "Venue in description."
-
-            desc = event['description']['text']
-            if desc == None:
-                desc = "No description provided."
-            else:
-                desc = list(desc)
-                for i in range(len(desc)):
-                    if(desc[i] == "'"):
-                        desc[i] = "''"
-                desc = "".join(desc)
-
-            eventbrite_link = event['url']
-
-            is_free = str(event['is_free'])
-
-            results.append((name, date, venue, desc, eventbrite_link, is_free, search_term, location_term))
-    else:
-        # If response code is not ok (200), print the resulting http error code with description
-        myResponse.raise_for_status()
-
-    return results
-
-def searchEvents2(search_term, location_term, dateKey, radius):
+def searchEvents(search_term, location_term, dateKey='', radius=''):
     url = "https://www.eventbriteapi.com/v3/events/search/"
     head = {'Authorization': 'Bearer {}'.format(eventbrite_token)}
     key = dateKey
+    data = {}
+    print (dateKey)
     if (key == 'all'):
         key = ''
-    data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue", "location.within": radius +  "mi", "start_date.keyword": key} #108 is fitness category
+    if dateKey != '' and radius != '':
+        data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue","radius": radius + "mi", "start_date.keyword": key} #108 is fitness category
+    elif dateKey != '':
+        data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue",  "start_date.keyword": key}
+    elif radius != '':
+        data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue","radius": radius + "mi"}
+    else:
+        data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue"}
     myResponse = requests.get(url, headers = head, params=data)
     results = []
     if(myResponse.ok):
@@ -286,27 +255,22 @@ def searchEvents2(search_term, location_term, dateKey, radius):
         for event in events:
             #format the strings for the database
             name = event['name']['text']
-            name = list(name)
-            for j in range(len(name)):
-                if(name[j] == "'"):
-                    name[j] = "''"
-            name = "".join(name)
+
+            name =reformatString(name)
 
             date = event['start']['local']
 
-            venue = event['venue']['address']['address_1']
-            if venue == None:
+            if (event['venue'] == None or event['venue']['address'] == None or event['venue']['address']['address_1'] == None):
                 venue = "Venue in description."
+            else:
+                venue  = event['venue']['address']['address_1']
+                venue = reformatString(venue)
 
-            desc = event['description']['text']
-            if desc == None:
+            if (event['description'] == None or event['description']['text'] == None):
                 desc = "No description provided."
             else:
-                desc = list(desc)
-                for i in range(len(desc)):
-                    if(desc[i] == "'"):
-                        desc[i] = "''"
-                desc = "".join(desc)
+                desc = event['description']['text']
+                desc = reformatString(desc)
 
             eventbrite_link = event['url']
 
@@ -318,15 +282,6 @@ def searchEvents2(search_term, location_term, dateKey, radius):
         myResponse.raise_for_status()
 
     return results
-
-# Dates from EventBrite api are in the format '2018-04-21T13:00:00'. reformatDate() turns it into
-# 'April 21 at 1:00PM'
-def reformatDate(date):
-    new_date = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S')
-    new_date = new_date.strftime("%B %-d at %-I:%M%p")
-    #print(new_date[-1])
-    return new_date
-
 
 @app.route("/", methods=['GET'])
 def hello():
@@ -507,7 +462,7 @@ def recommendEvents2(api_activities, datekey, radius):
     print("radius")
     print(radius)
     for activity in api_activities:
-        event = searchEvents2(activity, flask_login.current_user.location, dateKey= datekey, radius= radius)
+        event = searchEvents(activity, flask_login.current_user.location, dateKey= datekey, radius= radius)
         events.append(event)
 
     #flatten the 2D array into a 1D array
@@ -641,6 +596,26 @@ def refreshToken(fbid, access_token, refresh_token):
     insertRefreshToken(fbid, refresh_token)
 
     return [access_token, refresh_token]
+
+
+##Formatting functions
+# Dates from EventBrite api are in the format '2018-04-21T13:00:00'. reformatDate() turns it into
+# 'April 21 at 1:00PM'
+def reformatDate(date):
+    new_date = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S')
+    new_date = new_date.strftime("%B %-d at %-I:%M%p")
+    #print(new_date[-1])
+    return new_date
+
+#escape single quotes to insert into mysql
+def reformatString(text):
+    text = list(text)
+    for j in range(len(text)):
+        if(text[j] == "'"):
+            text[j] = "''"
+    text= "".join(text)
+    return text
+
 
 
 if __name__ == '__main__':
