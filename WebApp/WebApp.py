@@ -19,7 +19,6 @@ app.config['MYSQL_DATABASE_DB'] = 'fitbit'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
-
 #Fitbit api information
 redirect_uri = "http://127.0.0.1:5000/callback"
 client_id = "" # ---------------CHANGE-----------------
@@ -138,15 +137,13 @@ def protected():
             location = flask.request.form['change-location']
         else:
             location = flask_login.current_user.location
+        print (location)
 
         datekey = flask.request.form['datekey']
         radius = flask.request.form['radius']
         flask_login.current_user.location = location
         emptyRecommendations()
-        print("profile dates")
-        print(datetime)
-        print("radius")
-        print(radius)
+
         if(datekey == 'all' and radius == ''):
             events = recommendEvents(activities)
             insertActivities(activities)
@@ -155,7 +152,6 @@ def protected():
             return render_template('profile.html', name= flask_login.current_user.name, activities = activities, location = location, events = events)
         else:
             events = recommendEvents2(activities, datekey, radius)
-            print (events)
             insertActivities(activities)
             cursor = conn.cursor()
             cursor.execute(
@@ -188,10 +184,7 @@ def searchEventsRoute():
 
     else:
         # get first instance of search results
-        print("search events dates")
-        print(dateKey)
-        print("radius")
-        print(radius)
+
         if(dateKey == 'all' and radius == ''):
             events = searchEvents(flask.request.form['search_term'], location_term=flask.request.form['city'])
         else:
@@ -235,15 +228,14 @@ def searchEvents(search_term, location_term, dateKey='', radius=''):
     head = {'Authorization': 'Bearer {}'.format(eventbrite_token)}
     key = dateKey
     data = {}
-    print (dateKey)
     if (key == 'all'):
         key = ''
     if dateKey != '' and radius != '':
-        data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue","radius": radius + "mi", "start_date.keyword": key} #108 is fitness category
+        data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue","location.within": radius + "mi", "start_date.keyword": key} #108 is fitness category
     elif dateKey != '':
         data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue",  "start_date.keyword": key}
     elif radius != '':
-        data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue","radius": radius + "mi"}
+        data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue","location.within": radius + "mi"}
     else:
         data = {"q": search_term, "sort_by": "date", "location.address": location_term ,"categories":"108", "expand": "venue"}
     myResponse = requests.get(url, headers = head, params=data)
@@ -431,33 +423,31 @@ def recommendEvents2(api_activities, datekey, radius):
     db_activities = [str(db_activities[index][0]) for index in range(len(db_activities))]
 
     #if activity list hasn't changed, load recommended events from the cache
-    if  db_activities != [] and set(api_activities) == set(db_activities):
-        cursor.execute("SELECT TIME_MODIFIED FROM RECOMMENDATIONS WHERE FBID = '{0}' LIMIT 1".format(flask_login.current_user.id))
-        if cursor.rowcount != 0:
-            time_modified = cursor.fetchall()[0][0]
-            now = datetime.now()
-            now_minus_10 = now - timedelta(minutes = 10)
-            #if its been less than 10 minutes since the recommended events were updated, pull from cache
-            if time_modified > now_minus_10:
-                print ("pulling from cache")
-                cursor.execute("SELECT SID, NAME, DATE, VENUE, DES, LINK, IS_FREE FROM RECOMMENDATIONS WHERE FBID = '{0}'".format(flask_login.current_user.id))
-                events = cursor.fetchall()
-                events = [{"name": str(events[i][1]), "date": str(events[i][2]), "venue": str(events[i][3]), "desc": str(events[i][4]), "link": str(events[i][5]), "is_free": str(events[i][6]), "search_term": str(events[i][0]), "resNum": i } for i in range(len(events))]
-                return events
+    # if  db_activities != [] and set(api_activities) == set(db_activities):
+    #     cursor.execute("SELECT TIME_MODIFIED FROM RECOMMENDATIONS WHERE FBID = '{0}' LIMIT 1".format(flask_login.current_user.id))
+    #     if cursor.rowcount != 0:
+    #         time_modified = cursor.fetchall()[0][0]
+    #         now = datetime.now()
+    #         now_minus_10 = now - timedelta(minutes = 10)
+    #         #if its been less than 10 minutes since the recommended events were updated, pull from cache
+    #         if time_modified > now_minus_10:
+    #             print ("pulling from cache")
+    #             cursor.execute("SELECT SID, NAME, DATE, VENUE, DES, LINK, IS_FREE FROM RECOMMENDATIONS WHERE FBID = '{0}'".format(flask_login.current_user.id))
+    #             events = cursor.fetchall()
+    #             events = [{"name": str(events[i][1]), "date": str(events[i][2]), "venue": str(events[i][3]), "desc": str(events[i][4]), "link": str(events[i][5]), "is_free": str(events[i][6]), "search_term": str(events[i][0]), "resNum": i } for i in range(len(events))]
+    #             return events
 
     #empty the cache of recommended events and call searchEvents() with each of the user's activities
     emptyRecommendations()
     events = []
-    print("recommend events dates")
-    print(datetime)
-    print("radius")
-    print(radius)
     for activity in api_activities:
         event = searchEvents(activity, flask_login.current_user.location, dateKey= datekey, radius= radius)
         events.append(event)
 
     #flatten the 2D array into a 1D array
     events = [event for category in events for event in category]
+
+    print (len(events))
     #sort events by date
     events = sorted(events, key=lambda x: x[1])
 
