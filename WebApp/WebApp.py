@@ -163,7 +163,6 @@ def protected():
             return render_template('profile.html', name=flask_login.current_user.name, activities=activities,
                                    location=location, events=events)
 
-
 #search events
 #@flask_login.login_required
 @app.route("/searchEvents", methods=['POST'])
@@ -255,7 +254,6 @@ def searchEvents(search_term, location_term, dateKey='', radius=''):
         for event in events:
             #format the strings for the database
             name = event['name']['text']
-
             name =reformatString(name)
 
             date = event['start']['local']
@@ -329,21 +327,14 @@ def saveEvent():
                                name=flask_login.current_user.name)
     # reformat strings to avoid database errors.
     else:
-        tempN = event[1]
-        tempN = list(tempN)
-        for i in range(len(tempN)):
-            if (tempN[i] == "'"):
-                tempN[i] = "''"
-        tempN = "".join(tempN)
+        name = event[1]
+        name = reformatString(name)
 
-        tempD = event[4]
-        tempD = list(tempD)
-        for i in range(len(tempD)):
-            if (tempD[i] == "'"):
-                tempD[i] = "''"
-        tempD = "".join(tempD)
+        date = event[4]
+        date = reformatString(date)
+
         fbid = flask_login.current_user.id
-        cursor.execute("INSERT INTO SAVEDEVENTS (FBID, SID, NAME, DATE, VENUE, DES, LINK, IS_FREE) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')".format(fbid, event[0], tempN, event[2], event[3], tempD, event[5], event[6]))
+        cursor.execute("INSERT INTO SAVEDEVENTS (FBID, SID, NAME, DATE, VENUE, DES, LINK, IS_FREE) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')".format(fbid, event[0], name, event[2], event[3], date, event[5], event[6]))
         conn.commit()
         return render_template('savedEvents.html', events=getSearchSaved())
 
@@ -498,24 +489,16 @@ def saveEventRecommendations():
         return render_template('profile.html', message= "Event already saved", events=recommendEvents(activities), name= flask_login.current_user.name, activities = activities)
     #reformat strings to avoid database errors.
     else:
-        tempN = event[0]
-        tempN = list(tempN)
-        for i in range(len(tempN)):
-            if (tempN[i] == "'"):
-                tempN[i] = "''"
-        tempN = "".join(tempN)
+        name = event[0]
+        name = reformatString(name)
 
-        tempD = event[3]
-        tempD = list(tempD)
-        for i in range(len(tempD)):
-            if (tempD[i] == "'"):
-                tempD[i] = "''"
-        tempD = "".join(tempD)
+        date = event[3]
+        date = reformatString(date)
 
         fbid = flask_login.current_user.id
         cursor.execute(
             "INSERT INTO SAVEDEVENTS (FBID, NAME, DATE, VENUE, DES, LINK, IS_FREE) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(
-                fbid, tempN, event[1], event[2], tempD, event[4], event[5]))
+                fbid, name, event[1], event[2], date, event[4], event[5]))
         conn.commit()
         return render_template('savedEvents.html', events=getRecSaved())
 
@@ -545,7 +528,6 @@ def registerUser(fbid, access_token, refresh_token):
     user = User()
     user.id = fbid
     flask_login.login_user(user)
-
 
 def insertAccessToken(fbid, access_token):
     cursor = conn.cursor()
@@ -610,13 +592,11 @@ def reformatDate(date):
 #escape single quotes to insert into mysql
 def reformatString(text):
     text = list(text)
-    for j in range(len(text)):
-        if(text[j] == "'"):
-            text[j] = "''"
+    for char in range(len(text)):
+        if(text[char] == "'"):
+            text[char] = "''"
     text= "".join(text)
     return text
-
-
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)

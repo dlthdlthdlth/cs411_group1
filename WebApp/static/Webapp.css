@@ -77,7 +77,15 @@ a:hover {
     vertical-align: middle;
 }
 
-h2 { display: inline; }
+#logo{
+  display: block;
+  margin: auto;
+  padding-top: 10px;
+}
+
+.headline {
+  margin-top: -50px;
+}
 
 /*message*/
 .message{
@@ -220,7 +228,7 @@ hr{
   margin-top: 20px;
 }
 
-#logo {
+#footer-text {
     padding-top: 200px;
     font-size: 40px;
     text-transform: uppercase;

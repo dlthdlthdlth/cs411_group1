@@ -11,7 +11,8 @@
   {% extends "layout.html" %}
   {% block content %}
     <section class="header">
-            <h2>{{name}}'s Profile</h2>
+      <img src="../static/logo_favcon.png" height="100" width="100" id ="logo">
+      <h2 class="headline">{{name}}'s Profile</h2>
     </section>
     <section class="message">
         {% if message %}
