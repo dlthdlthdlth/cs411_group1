@@ -209,10 +209,12 @@ def deleteOldResults():
     if(count[0] > 5 or count[1] > 5):
         #get SID of first record in cache.
         cursor = conn.cursor()
-        cursor.execute("SELECT SID FROM RESULTCACHE ORDER BY ID LIMIT 1")
-        sid = cursor.fetchall()[0][0]
+        cursor.execute("SELECT SID, LOCATION_TERM FROM RESULTCACHE ORDER BY ID LIMIT 1")
+        temp = cursor.fetchall()[0]
+        sid = temp[0]
+        city = temp[1]
         #remove all results matching sid
-        cursor.execute("DELETE FROM RESULTCACHE WHERE SID = '{0}'".format(sid))
+        cursor.execute("DELETE FROM RESULTCACHE WHERE SID = '{0}' AND LOCATION_TERM = '{1}'".format(sid, city))
         conn.commit()
 
 #search events api call
