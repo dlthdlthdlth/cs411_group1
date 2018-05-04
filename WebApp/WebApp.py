@@ -367,7 +367,8 @@ def insertActivities(activities):
     conn.commit()
     return
 
-
+#For each activity that the user has logged, search eventbrite with the activity as the search term. Pull from cache if activities haven't changed
+#and the recommendations in the cache are less than 10 minutes old
 def recommendEvents(api_activities, datekey='all', radius=''):
     #fill the table with new events
     cursor = conn.cursor()
